@@ -6,6 +6,12 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class IServiceCollectionExtensions
     {
+        public static IServiceCollection RegisterDataQueryProvider<TProvider>(this IServiceCollection services) where TProvider : IDataQueryConfigProvider
+        {
+            services.AddTransient<IDataQueryConfigProvider>(c => c.GetRequiredService<TProvider>());
+            return services;
+        }
+
         public static IServiceCollection RegisterSqlDataQueryServices(this IServiceCollection services, string connectionString)
         {
             var dataQueryOptions = DataQueryOptions.Defaults;
@@ -20,12 +26,10 @@ namespace Microsoft.Extensions.DependencyInjection
             return services.RegisterSqlDataQueryServices(dataQueryOptions);
         }
 
-
         public static IServiceCollection RegisterSqlDataQueryServices(this IServiceCollection services, DataQueryOptions options)
         {
             services.AddSingleton(options);
             services.AddTransient<IDataQueryRepository, DataQuerySqlServerRepository>();
-            services.AddTransient<IDataQueryDataMapper, DataQuerySqlDataMapper>();
             return services;
         }
 

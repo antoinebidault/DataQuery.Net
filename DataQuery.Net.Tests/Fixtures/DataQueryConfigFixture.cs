@@ -5,11 +5,11 @@ namespace DataQuery.Net.Tests
 {
     public class DataQueryConfigFixture : IDisposable
     {
-        private readonly string _cnx = "Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=dataquery-test;Integrated Security=SSPI;AttachDBFilename=|DataDirectory|\ngpadataquery-test.mdf";
+        private readonly string _cnx = "Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=dataquery-test";
 
         public DataQueryConfigFixture()
         {
-            Config = new DataQueryConfig(_cnx) { };
+            Config = new DataQueryCollections() { };
 
             Config.Tables["User"] = new Table()
             {
@@ -97,6 +97,6 @@ namespace DataQuery.Net.Tests
 
         }
 
-        public DataQueryConfig Config { get; private set; }
+        public DataQueryCollections Config { get; private set; }
     }
 }

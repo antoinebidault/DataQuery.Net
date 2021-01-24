@@ -2,7 +2,6 @@
 {
   public interface IDataQueryRepository
   {
-    QueryResult Query(DataQueryConfig config, DataQueryFilterParam filter);
-    QueryResult QueryFromCache(DataQueryConfig config, DataQueryFilterParam filter);
+    DataQueryResult Query(DataQueryCollections config, DataQueryFilterParams filter);
   }
 }

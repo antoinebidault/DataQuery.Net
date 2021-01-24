@@ -15,7 +15,7 @@ namespace DataQuery.Net
     public class SqlJoinBuilder
     {
 
-        DataQueryConfig _config;
+        DataQueryCollections _config;
         IDictionary<string, Table> tablesToLink;
         IDictionary<string, Table> tablesIncluded;
 
@@ -23,7 +23,7 @@ namespace DataQuery.Net
         /// Nécessite la config du dataquery
         /// </summary>
         /// <param name="config">Config du DataQuery</param>
-        public SqlJoinBuilder(DataQueryConfig config)
+        public SqlJoinBuilder(DataQueryCollections config)
         {
             this._config = config;
         }

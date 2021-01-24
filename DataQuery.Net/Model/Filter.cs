@@ -13,7 +13,7 @@ namespace DataQuery.Net
   /// </summary>
   public class Filter
   {
-    public Filter(string filter, DataQueryConfig config)
+    public Filter(string filter, DataQueryCollections config)
     {
       IsLazy = false;
 
@@ -68,20 +68,20 @@ namespace DataQuery.Net
       if (config.MetricsAndDimensions.ContainsKey(dimOrMetricName))
       {
         if (!config.MetricsAndDimensions[dimOrMetricName].AllowedToRequest)
-          throw new Exception(string.Format("Vous n'avez pas les droits pour requêter cette dimension : {0} ! ", dimOrMetricName));
+          throw new Exception(string.Format("You don't have the right to access this dimension : {0} ! ", dimOrMetricName));
 
         this.Dimension = config.MetricsAndDimensions[dimOrMetricName];
       }
       else
       {
-        var message = string.Format("Dimension inexistante : '{0}'", filter);
+        var message = string.Format("This dimension does not exist : '{0}'", filter);
         throw new Exception(message);
       }
 
     }
 
     /// <summary>
-    /// Permet de gérer les parenthèses
+    /// For managing "("
     /// </summary>
     public string Suffix { get; set; }
 

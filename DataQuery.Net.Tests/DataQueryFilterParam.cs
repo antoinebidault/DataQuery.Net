@@ -15,7 +15,7 @@ namespace DataQuery.Net.Tests
     [Fact]
     public void DataQueryFilterPAramToBeWellParsed()
     {
-      DataQueryFilterParam result = new DataQueryFilterParam()
+      DataQueryFilterParams result = new DataQueryFilterParams()
       {
         Aggregate = false,
         Size = 10,

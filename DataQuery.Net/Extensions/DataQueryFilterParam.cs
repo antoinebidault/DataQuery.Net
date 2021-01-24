@@ -9,7 +9,7 @@ namespace DataQuery.Net
         /// Remove a filter in filters
         /// </summary>
         /// <param name="val"></param>
-        public static void RemoveFilter(this DataQueryFilterParam param, string val)
+        public static void RemoveFilter(this DataQueryFilterParams param, string val)
         {
             if (!string.IsNullOrEmpty(param.Filters))
                 param.Filters = Regex.Replace(param.Filters, @"[;,(]+?" + val + @"[!=~><+]+[a-z0-9-_~\/\\]+[)]?", "");
@@ -20,7 +20,7 @@ namespace DataQuery.Net
         /// </summary>
         /// <param name="val"></param>
         /// <param name="sep"></param>
-        public static void AppendFilter(this DataQueryFilterParam param, string val, ConditionSeparator sep = ConditionSeparator.And)
+        public static void AppendFilter(this DataQueryFilterParams param, string val, ConditionSeparator sep = ConditionSeparator.And)
         {
             if (!string.IsNullOrEmpty(param.Filters) && !param.Filters.EndsWith("("))
             {

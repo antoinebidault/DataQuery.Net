@@ -1,5 +1,6 @@
 ﻿using DataQuery.Net.Extensions;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;
 
@@ -8,32 +9,35 @@ namespace DataQuery.Net
 
     public class DataQuerySqlServerRepository : IDataQueryRepository
     {
-        private IDataQueryDataMapper mapper;
         private IMemoryCache _cache;
-        public DataQuerySqlServerRepository(IDataQueryDataMapper mapper, IMemoryCache cache)
+        private DataQueryOptions _options;
+
+        public DataQuerySqlServerRepository(DataQueryOptions options , IMemoryCache cache)
         {
-            this.mapper = mapper;
             this._cache = cache;
+            this._options = options;
         }
 
-        public QueryResult Query(DataQueryConfig config, DataQueryFilterParam filter)
+        public DataQueryResult Query(DataQueryCollections config, DataQueryFilterParams filter)
         {
-            return mapper.Query(config, filter);
-        }
-        public QueryResult QueryFromCache(DataQueryConfig config, DataQueryFilterParam filter)
-        {
-            string uniqueKey = (JsonConvert.SerializeObject(filter) + config.UniqueKey).ToGuid().ToString();
+            string uniqueKey = _options.CacheKeyPrefix + "_" + (JsonConvert.SerializeObject(filter)).ToGuid().ToString();
 
-            if (config.CacheEnabled)
+            if (_options.CacheEnabled)
             {
-                return _cache.GetOrCreate(string.Format("DataQuery_{0}", uniqueKey), (e) =>
+                return _cache.GetOrCreate(uniqueKey, (e) =>
                 {
-                    e.AbsoluteExpiration = DateTime.Now.AddSeconds(config.CacheDuration);
-                    return mapper.Query(config, filter);
+                    e.AbsoluteExpiration = DateTime.Now.AddSeconds(_options.CacheDuration);
+                    return QueryBase(config, filter);
                 });
             }
 
-            return mapper.Query(config, filter);
+            return QueryBase(config, filter);
+        }
+
+        private DataQueryResult QueryBase(DataQueryCollections config, DataQueryFilterParams filterParams)
+        {
+            var builder = new DataQuerySqlServerBuilder(_options);
+            return builder.Query(config, filterParams);
         }
     }
 }

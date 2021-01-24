@@ -7,16 +7,18 @@ using System.Text;
 using System.Diagnostics;
 using System.Globalization;
 using System.Data.SqlClient;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DataQuery.Net
 {
   public class DataQuerySqlServerBuilder 
   {
-    public DataQuerySqlServerBuilder()
+    public DataQuerySqlServerBuilder(DataQueryOptions options)
     {
+            this._options = options;
     }
 
-    private DataQueryConfig _config { get; set; }
+    private DataQueryCollections _config { get; set; }
     private List<string> _sqlSelect;
     private List<string> _sqlGroupBy;
     private List<string> _sqlWhere;
@@ -35,7 +37,7 @@ namespace DataQuery.Net
     /// <param name="param"></param>
     /// <param name="conf"></param>
     /// <returns></returns>
-    public QueryResult Query(DataQueryConfig conf, DataQueryFilterParam param)
+    public DataQueryResult Query(DataQueryCollections conf, DataQueryFilterParams param)
     {
       //Define config in global scope
       this._config = conf;
@@ -58,7 +60,7 @@ namespace DataQuery.Net
       string joinString = builder.JoinSqlString(filters.GetListOfDimension());
 
       //Résultats de la requête
-      var result = new QueryResult();
+      var result = new DataQueryResult();
       result.Filter = param;
 
       StringBuilder sqlSelectQuery = new StringBuilder();
@@ -181,7 +183,7 @@ namespace DataQuery.Net
         //Formattage de la requete de sélection
         sql += sqlSelectQuery.ToString() + " " + sqlQuery.ToString();
 
-        //Pagination
+        // Paginate
         sql += " OFFSET @pageS ROWS FETCH NEXT @pageE ROWS ONLY ";
 
         AddParameter("@pageS", SqlDbType.Int, (filters.PageSize * (filters.PageIndex - 1)));
@@ -191,9 +193,6 @@ namespace DataQuery.Net
       {
         sql = sqlSelectQuery.ToString() + " " + sqlQuery.ToString();
       }
-
-      //Force l'ordre des inner join
-      //   sql += " OPTION (FORCE ORDER) ";
 
       //Log en debug
       Debug.WriteLine("------------------------ CODE SQL AD HOC DATAQUERY  ----------------------------------------");
@@ -206,7 +205,7 @@ namespace DataQuery.Net
       var timestamp = DateTime.Now;
 #endif
 
-      using (var manager = new SqlCommand(sql, new SqlConnection(_config.ConnectionString)))
+      using (var manager = new SqlCommand(sql, new SqlConnection(_options.ConnectionString)))
       {
 
         //Ajout des params
@@ -218,7 +217,7 @@ namespace DataQuery.Net
           //Requête
           using (SqlDataReader reader = manager.ExecuteReader())
           {
-            result.Data = new QueryTable();
+            result.Data = new DataQueryTable();
             bool columnDefined = false;
 
             result.Data.PageIndex = filters.PageIndex;
@@ -229,12 +228,12 @@ namespace DataQuery.Net
               if (!columnDefined)
               {
                 //Ajout d'une colonne
-                var column = new Column();
+                var column = new DataQueryColumn();
                 var metric = _config.MetricsAndDimensions[reader.GetName(i)];
                 column.Name = metric.Alias;
                 column.Label = metric.Label;
                 column.IsMetric = metric.IsMetric;
-                column.Unite = metric.Unite;
+                column.Unite = metric.Unit;
                 column.Color = metric.Color;
                 column.Type = metric.SqlType.ToString();
                 result.Data.Columns.Add(column);
@@ -282,7 +281,7 @@ namespace DataQuery.Net
       }
       else
       {
-        using (var manager = new SqlCommand(sqlCount, new SqlConnection(_config.ConnectionString)))
+        using (var manager = new SqlCommand(sqlCount, new SqlConnection(_options.ConnectionString)))
         {
 
           //Ajout des params
@@ -597,7 +596,9 @@ namespace DataQuery.Net
     /// Gestion du where
     /// </summary>
     bool firstWhereStatement = true;
-    private void AppendWhere(string input, string sep = "AND")
+        private DataQueryOptions _options;
+
+        private void AppendWhere(string input, string sep = "AND")
     {
       if (firstWhereStatement)
       {
@@ -653,7 +654,6 @@ namespace DataQuery.Net
       if (value.GetType() == typeof(DateTime) && sqlDbType == SqlDbType.DateTime)
       {
         var date = new DateTime();
-
         if (!DateTime.TryParse(value.ToString(), out date))
           date = DateTime.ParseExact(value.ToString(), "dd/MM/yyyy", CultureInfo.CurrentUICulture);
 

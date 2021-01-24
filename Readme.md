@@ -9,12 +9,14 @@ Il faut que ces données soient structurées dans un modèle en étoile ou en fl
 
 Installer le package nuget
 ```
-package-install Ngpa.DataQuery
+package-install DataQuery.Net
 ```
 
 Mettre en place les dépendances dans le ConfigureServices :
 ```CSharp
-services.RegisterDataQueryServices();
+services.RegisterSqlDataQueryServices(options => {
+    options.ConnectionString = "{your SQL Server connection string here}";
+});
 ```
 
 Créer un Config provider en implémentant la classe IDataQueryConfigProvider :
@@ -22,7 +24,7 @@ Créer un Config provider en implémentant la classe IDataQueryConfigProvider :
 
   public class MyAwesomeDataQueryProvider : IDataQueryConfigProvider
   {
-    public DataQueryConfig Get()
+    public DataQueryCollections Provide()
     {
       var cnx = "Ma chaine de connexion à la BDD ici";
       var config = new DataQueryConfig(cnx) { };

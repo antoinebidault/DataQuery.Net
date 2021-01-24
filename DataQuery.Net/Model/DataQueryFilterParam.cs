@@ -11,10 +11,10 @@ namespace DataQuery.Net
     /// <summary>
     /// Les informations récupérées dans la requête GET ou POST (GET reco)
     /// </summary>
-    public class DataQueryFilterParam
+    public class DataQueryFilterParams
     {
         /// <summary>
-        /// Wether aggregation is triggered or not (Group by clause)
+        /// Wether aggregation is triggered or not (By default, the data are grouped by)
         /// </summary>
         public bool Aggregate { get; set; } = true;
 
@@ -110,7 +110,7 @@ namespace DataQuery.Net
         /// </summary>
         /// <param name="dqFilter"></param>
         /// <param name="config"></param>
-        public void BindTo(DataQueryFilter dqFilter, DataQueryConfig config)
+        public void BindTo(DataQueryFilter dqFilter, DataQueryCollections config)
         {
             //Propriétés simples
             dqFilter.Random = Random;
@@ -301,7 +301,7 @@ namespace DataQuery.Net
             }
 
 
-            //Liste des tables dépendantes à générer
+            // Dependent tables
             foreach (Table table in config.Tables.Values)
             {
                 foreach (DatabaseProp prop in table.Props)

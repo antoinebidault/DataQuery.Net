@@ -12,7 +12,7 @@ namespace DataQuery.Net
     public DatabaseProp()
     {
       this.SqlType = SqlDbType.NVarChar;
-      this.Aff = true;
+      this.Displayed = true;
       this.SqlJoin = new Dictionary<string, string>();
       this.AllowedToRequest = true;
       this.AllowedToExport = true;
@@ -64,7 +64,7 @@ namespace DataQuery.Net
    /// <summary>
    /// Unité de la valeur (Si c'est une métrique notamment)
    /// </summary>
-    public string Unite { get; set; }
+    public string Unit { get; set; }
 
     /// <summary>
     /// Couleur de la donnée
@@ -72,9 +72,9 @@ namespace DataQuery.Net
     public string Color { get; set; }
 
     /// <summary>
-    /// Si aff à false=> c'est comme si la colonne n'existait plus
+    /// 
     /// </summary>
-    public bool Aff { get; set; }
+    public bool Displayed { get; set; }
 
     /// <summary>
     /// Autorisé pour le requêtage (Faire des where)

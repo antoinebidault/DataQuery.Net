@@ -1,4 +1,5 @@
 ﻿using DataQuery.Net.Extensions;
+using DataQuery.Net.Model;
 using System;
 using System.Linq;
 
@@ -6,7 +7,7 @@ namespace DataQuery.Net
 {
     public class Inclusion
     {
-        public Inclusion(string inclusion, DataQueryConfig config)
+        public Inclusion(string inclusion, DataQueryCollections config)
         {
             string[] dims = inclusion.Split(':');
             string propName = dims[0];
@@ -27,7 +28,7 @@ namespace DataQuery.Net
             this.Value = dims[1];
 
             if (!config.MetricsAndDimensions[propName].AllowedToRequest)
-                throw new Exception(string.Format("Vous n'êtes malheureusement pas autorisé à requêter cette dimension : {0} ! ", propName));
+                throw new DataQueryException($"You are not allowed to access this dimension : {propName} ! ");
 
             this.Prop = config.Dimensions[propName];
             this.Table = config.Tables.Values.FirstOrDefault(m => m.Props.Contains(this.Prop));

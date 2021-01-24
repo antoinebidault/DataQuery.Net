@@ -9,6 +9,6 @@
         /// <summary>
         /// Return configuration
         /// </summary>
-        DataQueryConfig Get();
+         DataQueryCollections Provide();
     }
 }
