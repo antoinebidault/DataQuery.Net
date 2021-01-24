@@ -1,0 +1,107 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace DataQuery.Net.Sample
+{
+    public class UserDataQueryProvider : IDataQueryProvider
+    {
+        public DataQueryCollections Provide()
+        {
+            var config = new DataQueryCollections() { };
+
+            config.Tables["User"] = new Table()
+            {
+                // Le nom de la table et la clé passée au dictionnaire de table doivent matcher 
+                Name = "User",
+                // L'alias correspond à l'instruction AS du "select from table AS {alias}"
+                Alias = "U",
+                // Les propriétés correspondent à l'ensemble des dimensions ou métriques contenus dans la table que vous souhaitez requêter (Inutile de mettre l'intégralité des colonnes, juste ce dont vous avez besoin)
+                Props = new List<DatabaseProp>
+                {
+                new DatabaseProp()
+                {
+                // ALias : le nom avec lequel vous souhaitez requêter la propriété
+                Alias = "UserId",
+                // La colonne : correspond à ce qui va être sélectionné par le requêteur. Si c'est uune métrique, il faudra mettre une requête d'aggrégation SUM ou un COUNT
+                Column = "U.Id",
+                // La description du champ
+                Description = "User's id",
+                Label="Userid",
+                // Le type SQL du champ sera utile pour parser les dimensions sélectionnés.
+                SqlType = SqlDbType.Int,
+                // Ce flag permet de déterminer si c'est une dimension visible ou non
+                Displayed = true,
+                // A false par défaut, cette variable permet de déterminer si c'est une métrique ou non. Si s'en est une elle sera exclue automatiquement de la clause groupby. Si elle n'aggrège rien, il y aura une erreur
+                IsMetric = false,
+                // La jointure SQL à effectuer. La clé correspond au "Name" de la table, la valeur correspond à la propriété de jointure (En SQL, attention, ne pas prendre l'alias de colonne).
+                // Pour que la jointure soit effective, il faut que cette jointure soit faite des deux côtés, dans "User_Stat" et dans "User".
+                SqlJoin = new Dictionary<string, string>
+                {
+                {"User_Stat", "UserId" }
+                }
+                },
+                new DatabaseProp()
+                {
+                Alias = "Name",
+                Column = "U.Name",
+                Description = "User's name",
+                Label="Username",
+                Displayed = true
+                },
+                new DatabaseProp()
+                {
+                Alias = "Email",
+                Column = "U.Email",
+                Description = "Email",
+                Label="Email",
+                Displayed = true
+                }
+                }
+            };
+
+            config.Tables["User_Stat"] = new Table()
+            {
+                Name = "User_Stat",
+                Alias = "US",
+                Props = new List<DatabaseProp>
+                {
+                new DatabaseProp()
+                {
+                Alias = "UserRef",
+                Column = "US.UserId",
+                Displayed = true,
+                SqlJoin = new Dictionary<string, string>
+                {
+                {"User", "Id" }
+                }
+                },
+                new DatabaseProp()
+                {
+                Alias = "Date",
+                Column = "US.Date",  
+                // En passant ce flag à true, cette dimension sera utilisée pour filtrer les dates
+                UsedToFilterDate = true,
+                Description = "Date",
+                SqlType = System.Data.SqlDbType.Date,
+                Displayed = true
+                },
+                new DatabaseProp()
+                {
+                Alias = "NbConnexion",
+                Column = "SUM(US.NbConnexion)",
+                Description = "NbConnexion",
+                Label="NbConnexion",
+                IsMetric = true,
+                Displayed = true
+                }
+                }
+            };
+
+
+            return config;
+        }
+    }
+}

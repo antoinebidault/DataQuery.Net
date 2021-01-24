@@ -14,6 +14,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataQuery.Net", "DataQuery.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataQuery.Net.Tests", "DataQuery.Net.Tests\DataQuery.Net.Tests.csproj", "{030141AA-8EF0-4D7B-B409-6F2F885F037C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataQuery.Net.Sample", "DataQuery.Net.Sample\DataQuery.Net.Sample.csproj", "{014375AB-54F6-4F1A-BD6D-B02D25FFEC79}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,6 +30,10 @@ Global
 		{030141AA-8EF0-4D7B-B409-6F2F885F037C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{030141AA-8EF0-4D7B-B409-6F2F885F037C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{030141AA-8EF0-4D7B-B409-6F2F885F037C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{014375AB-54F6-4F1A-BD6D-B02D25FFEC79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{014375AB-54F6-4F1A-BD6D-B02D25FFEC79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{014375AB-54F6-4F1A-BD6D-B02D25FFEC79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{014375AB-54F6-4F1A-BD6D-B02D25FFEC79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -123,7 +123,7 @@ namespace DataQuery.Net
                 try
                 {
                     dqFilter.DateFin = DateTime.Now;
-                    string type = this.Period.Substring(this.Period.Length - 1, this.Period.Length);
+                    string type = this.Period.Substring(this.Period.Length - 1, 1);
                     int nb = Convert.ToInt32(this.Period.TrimEnd(type.ToCharArray()));
 
                     switch (type)

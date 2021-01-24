@@ -6,9 +6,9 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class IServiceCollectionExtensions
     {
-        public static IServiceCollection RegisterDataQueryProvider<TProvider>(this IServiceCollection services) where TProvider : IDataQueryConfigProvider
+        public static IServiceCollection RegisterDataQueryProvider<TProvider>(this IServiceCollection services) where TProvider : IDataQueryProvider
         {
-            services.AddTransient<IDataQueryConfigProvider>(c => c.GetRequiredService<TProvider>());
+            services.AddTransient<IDataQueryProvider>(c => c.GetRequiredService<TProvider>());
             return services;
         }
 
@@ -30,8 +30,10 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddSingleton(options);
             services.AddTransient<IDataQueryRepository, DataQuerySqlServerRepository>();
+            services.AddTransient<IDataQuery, DefaultDataQuery>();
             return services;
         }
+
 
     }
 }

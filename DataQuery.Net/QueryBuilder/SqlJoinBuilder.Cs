@@ -162,7 +162,7 @@ namespace DataQuery.Net
                 return null;
 
             //Première table
-            output += $"{paths.First().From.Name} AS {paths.First().From.Alias} WITH (NOLOCK) ";
+            output += $"[{paths.First().From.Name}] AS {paths.First().From.Alias}  ";
             tablesIncluded.Remove(paths.First().From.Name);
 
 
@@ -188,7 +188,7 @@ namespace DataQuery.Net
                         {
                             output += " INNER JOIN ";
                         }
-                        output += join.To.Name + " AS " + join.To.Alias + " WITH (NOLOCK) ";
+                        output += "[" + join.To.Name + "] AS " + join.To.Alias + " ";
                         output += " ON ";
                         output += GetOnStatement(join);
                         break;

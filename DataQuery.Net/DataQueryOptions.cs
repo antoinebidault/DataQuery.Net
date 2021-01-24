@@ -39,6 +39,7 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         public IEnumerable<Type> RegisteredProviders { get; private set; }
+        public bool IncludeQueryProfiling { get; set; }
     }
 
 }
