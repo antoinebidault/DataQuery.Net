@@ -5,8 +5,6 @@ namespace DataQuery.Net.Tests
 {
     public class DataQueryConfigFixture : IDisposable
     {
-        private readonly string _cnx = "Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=dataquery-test";
-
         public DataQueryConfigFixture()
         {
             Config = new DataQueryCollections() { };
@@ -23,7 +21,7 @@ namespace DataQuery.Net.Tests
             Column = "U.Id",
             Description = "User's id",
             Label="Userid",
-            Aff = true,
+            Displayed = true,
             SqlJoin = new Dictionary<string, string>
             {
               {"User_Stat", "UserId" }
@@ -35,7 +33,7 @@ namespace DataQuery.Net.Tests
             Column = "U.Name",
             Description = "User's name",
             Label="Username",
-            Aff = true
+            Displayed = true
           },
           new DatabaseProp()
           {
@@ -43,7 +41,7 @@ namespace DataQuery.Net.Tests
             Column = "U.Email",
             Description = "Email",
             Label="Email",
-            Aff = true
+            Displayed = true
           }
         }
             };
@@ -58,7 +56,7 @@ namespace DataQuery.Net.Tests
           {
             Alias = "UserIdStat",
             Column = "US.UserId",
-            Aff = true,
+            Displayed = true,
             SqlJoin = new Dictionary<string, string>
             {
               {"User", "UserId" }
@@ -71,7 +69,7 @@ namespace DataQuery.Net.Tests
             Description = "Date",
             UsedToFilterDate = true,
             SqlType = System.Data.SqlDbType.Date,
-            Aff = true
+            Displayed = true
           },
           new DatabaseProp()
           {
@@ -80,7 +78,7 @@ namespace DataQuery.Net.Tests
             Description = "NbConnexion",
             Label="NbConnexion",
             IsMetric = true,
-            Aff = true
+            Displayed = true
           }
         }
             };

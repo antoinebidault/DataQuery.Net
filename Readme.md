@@ -1,11 +1,11 @@
-# DataQuery 
+# DataQuery.Net
 The data query is an ASP.Net Core library for querying dynamically huge database using a basic querying language similar to Google analytics's API Explorer querying language (dimensions, metrics, filters...) .
 This tool was particularly useful for building a custom analytic tools on a bug database using millions of lines.
 
 # Prerequisite
 You need an SQL database on SQL Server 2012+
 ASP.Net Core 3.1
-You'll need an sql database structured as a star : (https://fr.wikipedia.org/wiki/%C3%89toile_(mod%C3%A8le_de_donn%C3%A9es))[https://fr.wikipedia.org/wiki/%C3%89toile_(mod%C3%A8le_de_donn%C3%A9es)]
+You'll need an sql database structured as a star : (https://en.wikipedia.org/wiki/Star_schema)[https://en.wikipedia.org/wiki/Star_schema]
 
 # Démarrage rapide
 
