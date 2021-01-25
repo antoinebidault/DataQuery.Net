@@ -9,6 +9,7 @@ This tool was particularly useful for building a custom analytic tools on a bug 
 You need an SQL database on SQL Server 2012+
 ASP.Net Core 3.1
 You'll need an sql database structured as a star : (https://en.wikipedia.org/wiki/Star_schema)[https://en.wikipedia.org/wiki/Star_schema]
+![Database star model](database-star-model.png)
 
 # Quickstart 
 
