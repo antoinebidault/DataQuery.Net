@@ -1,3 +1,6 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/c91s60qb1aj8bsps?svg=true)](https://ci.appveyor.com/project/antoinebidault/dataquery-net)
+![Nuget](https://img.shields.io/nuget/v/DataQuery.Net)
+
 # DataQuery.Net
 The data query is an ASP.Net Core library for querying dynamically huge database using a basic querying language similar to Google analytics's API Explorer querying language (dimensions, metrics, filters...) .
 This tool was particularly useful for building a custom analytic tools on a bug database using millions of lines.
