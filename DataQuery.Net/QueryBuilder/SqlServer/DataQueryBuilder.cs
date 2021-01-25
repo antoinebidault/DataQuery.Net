@@ -200,13 +200,11 @@ namespace DataQuery.Net
             Debug.WriteLine(sql);
             Debug.WriteLine("------------------------------------------------------------------------------------");
 
-#if DEBUG
             if (_options.IncludeQueryProfiling)
             {
                 result.SqlQuery = sql;
             }
             var timestamp = DateTime.Now;
-#endif
 
             using (var cnx = new SqlConnection(_options.ConnectionString))
             {
