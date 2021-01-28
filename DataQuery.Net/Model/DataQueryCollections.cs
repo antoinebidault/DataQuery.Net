@@ -6,7 +6,7 @@ using System.Linq;
 namespace DataQuery.Net
 {
     /// <summary>
-    /// Returned informations
+    /// Contains all informations about the database
     /// </summary>
     public class DataQueryCollections
     {
@@ -17,11 +17,11 @@ namespace DataQuery.Net
 
         public Dictionary<string, Table> Tables { get; set; }
 
-        public Dictionary<string, DatabaseProp> Metrics
+        public Dictionary<string, Column> Metrics
         {
             get
             {
-                var dic = new Dictionary<string, DatabaseProp>();
+                var dic = new Dictionary<string, Column>();
                 foreach (var item in MetricsAndDimensions)
                 {
                     if (item.Value.IsMetric)
@@ -32,11 +32,11 @@ namespace DataQuery.Net
                 return dic;
             }
         }
-        public Dictionary<string, DatabaseProp> Dimensions
+        public Dictionary<string, Column> Dimensions
         {
             get
             {
-                var dic = new Dictionary<string, DatabaseProp>();
+                var dic = new Dictionary<string, Column>();
                 foreach (var item in MetricsAndDimensions)
                 {
                     if (!item.Value.IsMetric)
@@ -48,11 +48,11 @@ namespace DataQuery.Net
             }
         }
 
-        public Dictionary<string, DatabaseProp> MetricsAndDimensions
+        public Dictionary<string, Column> MetricsAndDimensions
         {
             get
             {
-                var dic = new Dictionary<string, DatabaseProp>();
+                var dic = new Dictionary<string, Column>();
                 foreach (var table in Tables.Values)
                 {
                     foreach (var prop in table.Props)
@@ -63,8 +63,5 @@ namespace DataQuery.Net
                 return dic;
             }
         }
-
-     
-
     }
 }

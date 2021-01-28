@@ -18,6 +18,7 @@ namespace DataQuery.Net
         /// <summary>
         /// Add a filter dynamically to the filters string
         /// </summary>
+        /// <param name="param"></param>
         /// <param name="val"></param>
         /// <param name="sep"></param>
         public static void AppendFilter(this DataQueryFilterParams param, string val, ConditionSeparator sep = ConditionSeparator.And)

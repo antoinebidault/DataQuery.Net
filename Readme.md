@@ -5,7 +5,10 @@
 ![Logo dataquery](logo-dataquery.png)
 # DataQuery.Net
 The data query is an ASP.Net Core library for querying dynamically huge database using a basic querying language similar to Google analytics's API Explorer querying language (dimensions, metrics, filters...) .
-This tool was particularly useful for building a custom analytic tools on a bug database using millions of lines.
+This tool was particularly useful for building a custom analytic tools on a bug database using millions of lines. If you need to do lots of dynamics queries, time series, pie charts, this library can be particularly useful.
+
+# Disclaimer
+Use it at your own risk, this library is still WIP and needs some refactoring, testing improvements. 
 
 # Prerequisite
 You need an SQL database on SQL Server 2012+
@@ -47,12 +50,12 @@ Implement the IDataQueryProvider interface to provide the metrics and dimensions
         // The properties you would like to query (Just the columns you need to query or used in relationships)
         Props = new List<DatabaseProp>
         {
-          new DatabaseProp()
+          new Column()
           {
 			// ALias : The unique name of the dim or metric
             Alias = "UserId",
 			// La colonne : correspond à ce qui va être sélectionné par le requêteur. If it's a metric, you must use the proper aggregation operator : e.g. SUM(), AVG(), COUNT()...
-            Column = "U.Id",
+            ColumnName = "U.Id",
 			// Field description
             Description = "User's id",
             Label="Userid",
@@ -69,18 +72,18 @@ Implement the IDataQueryProvider interface to provide the metrics and dimensions
               {"User_Stat", "UserId" }
             }
           },
-          new DatabaseProp()
+          new Column()
           {
             Alias = "Name",
-            Column = "U.Name",
+            ColumnName = "U.Name",
             Description = "User's name",
             Label="Username",
             Displayed = true
           },
-          new DatabaseProp()
+          new Column()
           {
             Alias = "Email",
-            Column = "U.Email",
+            ColumnName = "U.Email",
             Description = "Email",
             Label="Email",
             Displayed = true
@@ -94,17 +97,17 @@ Implement the IDataQueryProvider interface to provide the metrics and dimensions
         Alias = "US",
         Props = new List<DatabaseProp>
         {
-          new DatabaseProp()
+          new Column()
           {
             Alias = "UserRef",
-            Column = "US.UserId",
+            ColumnName = "US.UserId",
             Displayed = true,
             SqlJoin = new Dictionary<string, string>
             {
               {"User", "UserId" }
             }
           },
-          new DatabaseProp()
+          new Column()
           {
             Alias = "Date",
             Column = "US.Date",  
@@ -114,7 +117,7 @@ Implement the IDataQueryProvider interface to provide the metrics and dimensions
             SqlType = System.Data.SqlDbType.Date,
             Displayed = true
           },
-          new DatabaseProp()
+          new Column()
           {
             Alias = "NbConnexion",
             Column = "SUM(U.NbConnexion)",

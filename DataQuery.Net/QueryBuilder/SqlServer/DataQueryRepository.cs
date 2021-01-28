@@ -9,8 +9,8 @@ namespace DataQuery.Net
 
     public class DataQuerySqlServerRepository : IDataQueryRepository
     {
-        private IMemoryCache _cache;
-        private DataQueryOptions _options;
+        private readonly IMemoryCache _cache;
+        private readonly DataQueryOptions _options;
 
         public DataQuerySqlServerRepository(DataQueryOptions options , IMemoryCache cache)
         {

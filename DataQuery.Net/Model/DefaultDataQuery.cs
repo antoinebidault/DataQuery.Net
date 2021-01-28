@@ -3,7 +3,7 @@
     public class DefaultDataQuery : IDataQuery
     {
         private IDataQueryProvider _provider;
-        private IDataQueryRepository _repo;
+        private readonly IDataQueryRepository _repo;
 
         public DefaultDataQuery(IDataQueryRepository repo, IDataQueryProvider provider)
         {

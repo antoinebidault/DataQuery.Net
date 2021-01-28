@@ -27,7 +27,7 @@ namespace DataQuery.Net
             }
             this.Value = dims[1];
 
-            if (!config.MetricsAndDimensions[propName].AllowedToRequest)
+            if (!config.MetricsAndDimensions[propName].AllowedToFilter)
                 throw new DataQueryException($"You are not allowed to access this dimension : {propName} ! ");
 
             this.Prop = config.Dimensions[propName];
@@ -37,16 +37,14 @@ namespace DataQuery.Net
             this.LinkedPropertyColumnName = this.LinkedTable.Alias + "." + KeyTable.SqlJoin.FirstOrDefault().Value;
         }
 
-        public DatabaseProp Prop { get; set; }
-        public DatabaseProp KeyTable { get; set; }
+        public Column Prop { get; set; }
+        public Column KeyTable { get; set; }
         public string LinkedPropertyColumnName { get; set; }
         public Table LinkedTable { get; set; }
         public Table Table { get; set; }
         public string Value { get; set; }
         public TypeInclusion Type { get; set; }
     }
-
-
 
 
 }

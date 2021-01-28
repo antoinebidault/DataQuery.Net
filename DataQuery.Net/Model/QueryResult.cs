@@ -74,8 +74,11 @@ namespace DataQuery.Net
         /// <returns></returns>
         public DataTable ToDataTable()
         {
-            var dt = new DataTable();
-            dt.TableName = "Data query result";
+            var dt = new DataTable
+            {
+                TableName = "Data query result"
+            };
+
             foreach (DataQueryColumn col in Columns)
             {
                 dt.Columns.Add(new DataColumn() { ColumnName = col.Name, Caption = col.Label });

@@ -13,12 +13,12 @@ namespace DataQuery.Net.Tests
             {
                 Name = "User",
                 Alias = "U",
-                Props = new List<DatabaseProp>
+                Props = new List<Column>
         {
-          new DatabaseProp()
+          new Column()
           {
             Alias = "UserId",
-            Column = "U.Id",
+            ColumnName = "U.Id",
             Description = "User's id",
             Label="Userid",
             Displayed = true,
@@ -27,18 +27,18 @@ namespace DataQuery.Net.Tests
               {"User_Stat", "UserId" }
             }
           },
-          new DatabaseProp()
+          new Column()
           {
             Alias = "Name",
-            Column = "U.Name",
+            ColumnName = "U.Name",
             Description = "User's name",
             Label="Username",
             Displayed = true
           },
-          new DatabaseProp()
+          new Column()
           {
             Alias = "Email",
-            Column = "U.Email",
+            ColumnName = "U.Email",
             Description = "Email",
             Label="Email",
             Displayed = true
@@ -50,31 +50,31 @@ namespace DataQuery.Net.Tests
             {
                 Name = "User_Stat",
                 Alias = "US",
-                Props = new List<DatabaseProp>
+                Props = new List<Column>
         {
-          new DatabaseProp()
+          new Column()
           {
             Alias = "UserIdStat",
-            Column = "US.UserId",
+            ColumnName = "US.UserId",
             Displayed = true,
             SqlJoin = new Dictionary<string, string>
             {
               {"User", "UserId" }
             }
           },
-          new DatabaseProp()
+          new Column()
           {
             Alias = "Date",
-            Column = "US.Date",
+            ColumnName = "US.Date",
             Description = "Date",
             UsedToFilterDate = true,
             SqlType = System.Data.SqlDbType.Date,
             Displayed = true
           },
-          new DatabaseProp()
+          new Column()
           {
             Alias = "NbConnexion",
-            Column = "SUM(U.NbConnexion)",
+            ColumnName = "SUM(U.NbConnexion)",
             Description = "NbConnexion",
             Label="NbConnexion",
             IsMetric = true,

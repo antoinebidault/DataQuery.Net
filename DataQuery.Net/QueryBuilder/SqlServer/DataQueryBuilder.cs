@@ -31,18 +31,23 @@ namespace DataQuery.Net
 
 
         /// <summary>
-        /// Génère une requête adhoc à partir d'une liste de dimensions, filtres...
-        /// A la manière du query explorer de google.
+        /// Generate an as hoc query using params + collections
         /// </summary>
         /// <param name="param"></param>
         /// <param name="conf"></param>
         /// <returns></returns>
         public DataQueryResult Query(DataQueryCollections conf, DataQueryFilterParams param)
         {
+            // Set size
+            if (param.Size > _options.MaxRecordsetSize)
+            {
+                param.Size = _options.MaxRecordsetSize;
+            }
+
             //Define config in global scope
             this._config = conf;
 
-            //Init des params
+            //Init params
             _sqlSelect = new List<string>();
             _sqlSelectCte = new List<string>() { "RowNum" };
             _sqlGroupBy = new List<string>();
@@ -52,14 +57,14 @@ namespace DataQuery.Net
             this._whereStatement = new StringBuilder();
             this.firstWhereStatement = true;
 
-            //Transfo des paramètres tout moches en un beau filtre 
+            // Transform input parameted to clean dataQueryFilter object
             var filters = new DataQueryFilter();
             param.BindTo(filters, _config);
 
             SqlJoinBuilder builder = new SqlJoinBuilder(conf);
             string joinString = builder.JoinSqlString(filters.GetListOfDimension());
 
-            //Résultats de la requête
+            // Query results
             var result = new DataQueryResult();
             result.Filter = param;
 
@@ -67,58 +72,54 @@ namespace DataQuery.Net
             StringBuilder sqlCountQuery = new StringBuilder();
             StringBuilder sqlQuery = new StringBuilder();
 
-            //DIMENSIONS
-            //Traitement des dimensions
-            foreach (DatabaseProp champ in filters.Dimensions)
+            // DIMENSIONS
+            foreach (Column champ in filters.Dimensions)
             {
-                //On sélectionne la dimension
-                _sqlSelect.Add(champ.Column + " AS " + champ.Alias);
+                _sqlSelect.Add(champ.ColumnName + " AS " + champ.Alias);
                 _sqlSelectCte.Add(champ.Alias);
-                //On regroupe par dimension
-                _sqlGroupBy.Add(champ.Column);
+                _sqlGroupBy.Add(champ.ColumnName);
             }
 
-
-            //METRIQUES
-            //Traitement des métriques
-            foreach (DatabaseProp champ in filters.Metrics)
+            // Metrics handling
+            foreach (Column champ in filters.Metrics)
             {
-                _sqlSelect.Add(champ.Column + " AS " + champ.Alias);
+                _sqlSelect.Add(champ.ColumnName + " AS " + champ.Alias);
                 _sqlSelectCte.Add(champ.Alias);
             }
 
-            //Gestion des tris
+            // Sorting
             if (filters.Sorts.Any() && !filters.Random)
             {
                 foreach (Sort sort in filters.Sorts)
                 {
-                    _sqlOrderBy.Add(sort.Prop.Column + " " + (sort.Asc ? "ASC" : "DESC"));
+                    _sqlOrderBy.Add(sort.Prop.ColumnName + " " + (sort.Asc ? "ASC" : "DESC"));
                 }
             }
             else if (filters.Random)
             {
-                //Si Random
+                // If Random
                 _sqlOrderBy.Add("NEWID() ASC");
             }
 
-            //Dédoublonnage
-            RemoveDoublon();
+            // Duplicate removing
+            RemoveDuplicates();
 
-            //Champs de comptage
+            // Order by
             string sqlOrder = string.Join(",", _sqlOrderBy);
 
-            //Liste de sélection
+            // Select building
             sqlSelectQuery.Append(" SELECT ");
             sqlSelectQuery.Append(string.Join(",", _sqlSelect));
             sqlSelectQuery.AppendLine();
 
+            // Select count
             sqlCountQuery.Append("SELECT COUNT(*) OVER () AS totalRows ");
             sqlCountQuery.AppendLine();
 
-            //Construction des jointures de tables
+            // Build of joinings
             sqlQuery.Append(" FROM ");
 
-            //Joining
+            // Joining
             sqlQuery.Append(joinString);
             sqlQuery.AppendLine();
 
@@ -129,20 +130,20 @@ namespace DataQuery.Net
                 AppendWhere(" ( " + filterDefault + " ) ");
             }
 
-            //Date de début et date de fin
+            // Startdate and end date
             AppendDateQuery(filters);
 
-            //On prend les filtres qui sont des dimensions
+            // Filters on dimensions
             IEnumerable<Filter> filtersOnDimension = filters.Filters.Where(m => !m.Dimension.IsMetric);
             HandleWhereFilters(filtersOnDimension);
 
             // Batch filtering
             HandleBatchWhereFilters(filters.BatchFilters);
 
-            //handle fulltext queries
+            // Full text queries
             HandleFullTextQueries(filters);
 
-            //Ajout des inclusions/exclusions de liste
+            // Inclusions handlinh
             AppendInclusion(filters.Inclusions);
 
 
@@ -159,10 +160,10 @@ namespace DataQuery.Net
             }
 
 
-            //Filtres sur les métriques
+            // Filters on metrics using HAVING statements
             AppendHavingStatements(filters, sqlQuery);
 
-            //Order BY
+            // Order BY
             if (!string.IsNullOrEmpty(sqlOrder))
                 sqlQuery.Append(" ORDER BY " + sqlOrder + " ");
             else
@@ -172,15 +173,14 @@ namespace DataQuery.Net
             string sql = "";
             string sqlCount = "";
 
-            //Pagination en OFFSET
-            //Le CTE manquait cruellement de perf et bouffait tout le tempDB.
+            // OFFSET Pagination
             if (filters.PageSize.HasValue && filters.PageIndex.HasValue)
             {
 
-                //Formattage de la requete de comptage
+                // Query formatting
                 sqlCount = sqlCountQuery.ToString() + " " + sqlQuery.ToString();
 
-                //Formattage de la requete de sélection
+                // Query selecting
                 sql += sqlSelectQuery.ToString() + " " + sqlQuery.ToString();
 
                 // Paginate
@@ -194,8 +194,8 @@ namespace DataQuery.Net
                 sql = sqlSelectQuery.ToString() + " " + sqlQuery.ToString();
             }
 
-            //Log en debug
-            Debug.WriteLine("------------------------ CODE SQL AD HOC DATAQUERY  ----------------------------------------");
+            // Debug log
+            Debug.WriteLine("------------------------ DataQuery Stored procedure  ----------------------------------------");
             _sqlWhereParams.ForEach(p => Debug.WriteLine("DECLARE " + p.ParameterName + " " + p.SqlDbType.ToString() + " = '" + p.Value + "'"));
             Debug.WriteLine(sql);
             Debug.WriteLine("------------------------------------------------------------------------------------");
@@ -321,7 +321,7 @@ namespace DataQuery.Net
         }
 
 
-        private void HandleBatchWhereFilters(IDictionary<DatabaseProp, DataTable> filters)
+        private void HandleBatchWhereFilters(IDictionary<Column, DataTable> filters)
         {
 
             if (filters == null)
@@ -334,7 +334,7 @@ namespace DataQuery.Net
                 foreach (var filter in filters)
                 {
                     where.Append(" ( ");
-                    where.Append(filter.Key.Column);
+                    where.Append(filter.Key.ColumnName);
                     where.Append($" IN (SELECT Item FROM @{ filter.Key.Alias}{i}) ");
                     where.Append(" ) ");
                     //  filter.Value
@@ -373,13 +373,13 @@ namespace DataQuery.Net
                             if (filter.Type == OperatorType.Different && !string.IsNullOrEmpty(filter.Value))
                             {
                                 where.Append(" ( ");
-                                where.Append(dim.Column);
+                                where.Append(dim.ColumnName);
                                 where.Append(" IS NULL OR ");
                             }
 
 
                             where.Append(" ");
-                            where.Append(dim.Column);
+                            where.Append(dim.ColumnName);
                             where.Append(" ");
                             if (filter.Type == OperatorType.Equal && string.IsNullOrEmpty(filter.Value))
                             {
@@ -414,7 +414,7 @@ namespace DataQuery.Net
                     where.Append(filter.Suffix);
                     where.Append(" ");
 
-                    //Apply filter if not the last
+                    // Apply filter at last
                     if (filter != filtersOnDimension.Last())
                     {
                         where.Append(" ");
@@ -437,16 +437,16 @@ namespace DataQuery.Net
                 Table fullTextQueryTable = filters.Tables.FirstOrDefault(m => m.Value.SupportFreeText).Value;
 
                 if (fullTextQueryTable == null)
-                    throw new Exception("Cet entrepôt de données ne supporte pas les données");
+                    throw new Exception("Full text query is not supported");
 
                 //Test if some requested dimensions are in fulltext index 
                 if (!fullTextQueryTable.Props.Any(m => !m.IsMetric && filters.Dimensions.Select(s => s.Alias).Contains(m.Alias)))
-                    throw new Exception(string.Format("Aucune dimension appartient à la table {0} qui contient l'index full text", fullTextQueryTable.Name));
+                    throw new Exception(string.Format("This dimension does not belong to {0} which contains the fulltext index", fullTextQueryTable.Name));
 
                 string fullTextSearchColumns = string.Format("{0}.*", fullTextQueryTable.Alias);
 
                 if (filters.FullTextQueryConstraints.Any())
-                    fullTextSearchColumns = string.Join(",", filters.FullTextQueryConstraints.Select(m => m.Column));
+                    fullTextSearchColumns = string.Join(",", filters.FullTextQueryConstraints.Select(m => m.ColumnName));
 
                 AppendWhere(string.Format("CONTAINS({0},@fullTextSearch)", fullTextSearchColumns));
                 AddParameter("@fullTextSearch", SqlDbType.NVarChar, FormatFullTextQuery(filters.FullTextQuery));
@@ -465,7 +465,7 @@ namespace DataQuery.Net
                 {
                     var dim = filter.Dimension;
                     sqlQuery.Append(" ");
-                    sqlQuery.Append(dim.Column);
+                    sqlQuery.Append(dim.ColumnName);
                     sqlQuery.Append(" ");
                     sqlQuery.Append(filter.Type.GetSqlLabel());
                     sqlQuery.Append(" @" + dim.Alias + l);
@@ -492,14 +492,14 @@ namespace DataQuery.Net
         }
 
         /// <summary>
-        /// Ajoute le filtre par date
+        /// Build a date query
         /// </summary>
         private void AppendDateQuery(DataQueryFilter filters)
         {
             if (!filters.DateDebut.HasValue && !filters.DateFin.HasValue)
                 return;
 
-            IList<DatabaseProp> dateProps = null;
+            IList<Column> dateProps = null;
 
             //Cas ou on fait ça en automatique
             if (filters.ForcedDateFilter.Any())
@@ -510,9 +510,9 @@ namespace DataQuery.Net
             int i = 1;
             if (dateProps.Any())
             {
-                foreach (DatabaseProp dim in dateProps)
+                foreach (Column dim in dateProps)
                 {
-                    AppendWhere(dim.Column + string.Format(" BETWEEN @dq_dateDeb{0} AND @dq_dateFin{0}  ", i));
+                    AppendWhere(dim.ColumnName + string.Format(" BETWEEN @dq_dateDeb{0} AND @dq_dateFin{0}  ", i));
 
                     if (filters.DateFin.Value.TimeOfDay.TotalSeconds == 0)
                         filters.DateFin = filters.DateFin.Value.AddDays(1).AddSeconds(-1);
@@ -542,10 +542,10 @@ namespace DataQuery.Net
                     sqlLines += string.Format("{0} {1} (SELECT {2} FROM {3} {4} WHERE {5}={6} ) ",
                       inclusion.LinkedPropertyColumnName,
                       inOrOutStr,
-                      inclusion.KeyTable.Column,
+                      inclusion.KeyTable.ColumnName,
                       inclusion.Table.Name,
                       inclusion.Table.Alias,
-                      inclusion.Prop.Column,
+                      inclusion.Prop.ColumnName,
                       paramName
                     );
 
@@ -569,7 +569,7 @@ namespace DataQuery.Net
         }
 
         /// <summary>
-        /// Ajoute le filtre sur l'orthodomie
+        /// Add orthodromy filtering
         /// Ex : Societe_Position==2.065638 49.465552|6000
         /// </summary>
         private string AppendGeographyQuery(Filter filter)
@@ -580,20 +580,22 @@ namespace DataQuery.Net
             var arrVal = filter.Value.Split('|');
 
             if (arrVal.Count() != 2)
-                throw new Exception("Erreur sur la dimension " + filter.Dimension.Column + ", le format doit être {latInDeg} {lngInDeg}|{distanceInMeter}. Ex : 2.065638 49.465552|6000");
+                throw new Exception("Error on dimension " + filter.Dimension.ColumnName + ", the format must be {latInDeg} {lngInDeg}|{distanceInMeter}. Ex : 2.065638 49.465552|6000");
 
             try
             {
-                string valueLatLng = arrVal[0];
-                string distance = arrVal[1];
-                param = string.Format("geography::STGeomFromText('POINT({0})', 4326)", valueLatLng);
-                output += (string.Format("{0}.STDistance({1}) IS NOT NULL", filter.Dimension.Column, param));
+                var latLng = arrVal[0].Split(' ');
+                double lat = double.Parse(latLng[0]);
+                double lng = double.Parse(latLng[1]);
+                double distance = double.Parse(arrVal[1]);
+                param = $"geography::STGeomFromText('POINT({lat} {lng})', 4326)";
+                output += (string.Format("{0}.STDistance({1}) IS NOT NULL", filter.Dimension.ColumnName, param));
                 output += " AND ";
-                output += (string.Format("{0}.STDistance({1}) < {2} ", filter.Dimension.Column, param, distance));
+                output += (string.Format("{0}.STDistance({1}) < {2} ", filter.Dimension.ColumnName, param, distance));
             }
             catch
             {
-                throw new Exception("Erreur sur la dimension " + filter.Dimension.Column + ", le format doit être {latInDeg} {lngInDeg}|{distanceInMeter}. Ex : 2.065638 49.465552|6000");
+                throw new Exception("Erreur sur la dimension " + filter.Dimension.ColumnName + ", le format doit être {latInDeg} {lngInDeg}|{distanceInMeter}. Ex : 2.065638 49.465552|6000");
             }
 
             output += " ) ";
@@ -603,7 +605,7 @@ namespace DataQuery.Net
 
 
         /// <summary>
-        /// Gestion du where
+        /// Where statement handling
         /// </summary>
         bool firstWhereStatement = true;
         private DataQueryOptions _options;
@@ -629,27 +631,18 @@ namespace DataQuery.Net
         }
 
         /// <summary>
-        /// Supprime les doublons des lists contenant les éléments de la requète
+        /// Remove select, orderBy and groupBy alias
         /// </summary>
-        private void RemoveDoublon()
+        private void RemoveDuplicates()
         {
-            //Champs à sélectionner
             _sqlSelect = _sqlSelect.Distinct().ToList();
-
-            //Table source
-            // requiredTable = requiredTable.GroupBy(m => m.Name).Select(m => m.First()).OrderBy(m => m.Order).ToList();
-
-            //Regroupements
             _sqlGroupBy = _sqlGroupBy.Distinct().ToList();
-
-            //Order by
             _sqlOrderBy = _sqlOrderBy.Distinct().ToList();
-
         }
 
 
         /// <summary>
-        /// Ajoute un paramètre à la proc stock
+        /// Add a single parameter to stored procedure
         /// </summary>
         /// <param name="paramName"></param>
         /// <param name="sqlDbType"></param>
@@ -665,7 +658,7 @@ namespace DataQuery.Net
             {
                 var date = new DateTime();
                 if (!DateTime.TryParse(value.ToString(), out date))
-                    date = DateTime.ParseExact(value.ToString(), "dd/MM/yyyy", CultureInfo.CurrentUICulture);
+                    date = DateTime.ParseExact(value.ToString(), _options.InputDateFormat, CultureInfo.CurrentUICulture);
 
                 value = date;
             }

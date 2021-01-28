@@ -9,7 +9,8 @@ namespace DataQuery.Net
 {
 
     /// <summary>
-    /// Les informations récupérées dans la requête GET ou POST (GET reco)
+    /// The filter query param can be passed as argument of a controller action
+    /// in  GET ou POST
     /// </summary>
     public class DataQueryFilterParams
     {
@@ -19,12 +20,12 @@ namespace DataQuery.Net
         public bool Aggregate { get; set; } = true;
 
         /// <summary>
-        /// Nombre de lignes à récupérer par page (Max 10 000)
+        /// Number of lines to get (the max is set in DataQuery config)
         /// </summary>
         public int? Size { get; set; }
 
         /// <summary>
-        /// N° de la page en commençant par 1. (Par défaut : 1)
+        /// Page index
         /// </summary>
         public int? Page { get; set; }
 
@@ -39,51 +40,53 @@ namespace DataQuery.Net
         public string QueryConstraints { get; set; }
 
         /// <summary>
-        /// Date de début
+        /// Start date
         /// </summary>
         public DateTime? Start { get; set; }
 
         /// <summary>
-        /// Date de fin de l'analyse (Par défaut)
+        /// End of analyze
         /// </summary>
         public DateTime? End { get; set; }
 
         /// <summary>
-        /// Période : 1w = 1 semaine, 3m = 3mois
+        /// Querying period : 1w = 1 semaine, 3m = 3mois
+        /// If provided, Start and End will be ignored
         /// </summary>
         [RegularExpression(@"^[0-9]{1,2}[dhmwy]$")]
         public string Period { get; set; }
 
         /// <summary>
-        /// Nom du champ à trier (1 seul possible)
+        /// database columns alias used to sort data (1 at a time)
         /// </summary>
         public string Sort { get; set; }
 
         /// <summary>
-        /// par défaut à false (Descendant), ordre du tri.
+        /// False by default, set the sort direction
         /// </summary>
         public bool Asc { get; set; } = false;
 
         /// <summary>
-        /// Liste des métriques (séparées par des ,)
-        /// Case insensitive
-        /// ex: Paps,clics
+        /// Comma separated database columns alias set as metric
+        /// The prop name are case insensitive
+        /// ex: Clics, Connexions
         /// </summary>
         public string Metrics { get; set; }
 
         /// <summary>
-        /// Liste des dimensions (Séparées par des ,)
-        /// ex: Date,Campaign
+        /// Comma separated database columns alias
+        /// e.g. Date,Campaign
         /// </summary>
         public string Dimensions { get; set; }
 
         /// <summary>
-        /// Filtre au format google (IdCookie==10310501,EventKey!=cat)
+        /// Filters on Google format (IdCookie==10310501,EventKey!=cat)
+        /// https://developers.google.com/analytics/devguides/reporting/core/v3/reference#filters
         /// </summary>
         public string Filters { get; set; }
 
         /// <summary>
-        /// Si je veux un truc randomizé ou pas
+        /// Set to true for randomizing the result
         /// </summary>
         public bool Random { get; set; }
 
@@ -93,8 +96,7 @@ namespace DataQuery.Net
         public string Includes { get; set; }
 
         /// <summary>
-        /// Champ sur lequel on applique les filtres start,end
-        /// Laisser vide si vous préférez que le dataquery choisisse le champs de filtre de date pour vous.
+        /// Force the field used to filter date with start and end params
         /// </summary>
         public string ForcedDateFilter { get; set; }
 
@@ -112,7 +114,6 @@ namespace DataQuery.Net
         /// <param name="config"></param>
         public void BindTo(DataQueryFilter dqFilter, DataQueryCollections config)
         {
-            //Propriétés simples
             dqFilter.Random = Random;
             dqFilter.DateDebut = Start;
             dqFilter.DateFin = End;
@@ -155,7 +156,7 @@ namespace DataQuery.Net
             dqFilter.PageIndex = Page;
             dqFilter.Aggregate = Aggregate;
 
-            // Données incluses
+            // Included data
             if (!string.IsNullOrEmpty(Includes))
             {
                 foreach (string dim in Includes.Split(',').Select(m => m.Trim()))
@@ -175,7 +176,7 @@ namespace DataQuery.Net
                         if (config.Dimensions[dim].IsGeography)
                             throw new Exception(string.Format("Vous sélectionnez un type géography, ce qui n'est pas autorisé : {0} ! ", dim));
 
-                        if (!config.Dimensions[dim].AllowedToExport)
+                        if (!config.Dimensions[dim].AllowedToView)
                             throw new Exception(string.Format("Vous n'avez pas les droits pour exporter cette dimension : {0} ! ", dim));
 
                         dqFilter.Dimensions.Add(config.Dimensions[dim]);
@@ -190,7 +191,7 @@ namespace DataQuery.Net
                 {
                     if (config.Dimensions.ContainsKey(keyValuePair.Key))
                     {
-                        if (!config.Dimensions[keyValuePair.Key].AllowedToRequest)
+                        if (!config.Dimensions[keyValuePair.Key].AllowedToFilter)
                             throw new Exception(string.Format("Vous n'avez pas les droits pour requêter en batch cette dimension : {0} ! ", keyValuePair.Key));
 
                         var dt = new DataTable();
@@ -217,7 +218,7 @@ namespace DataQuery.Net
                             if (config.Dimensions[dim].IsGeography)
                                 throw new Exception(string.Format("La contrainte de recherche suivante n'est pas autorisée : {0} ! ", dim));
 
-                            if (!config.Dimensions[dim].AllowedToRequest && !config.Dimensions[dim].AllowedToExport)
+                            if (!config.Dimensions[dim].AllowedToFilter && !config.Dimensions[dim].AllowedToView)
                                 throw new Exception(string.Format("La contrainte de recherche suivante n'est pas autorisée à l'export, contactez l'admin : {0} ! ", dim));
 
                             dqFilter.FullTextQueryConstraints.Add(config.Dimensions[dim]);
@@ -234,7 +235,7 @@ namespace DataQuery.Net
                 {
                     if (config.Dimensions.ContainsKey(dim))
                     {
-                        if (!config.Dimensions[dim].AllowedToRequest && config.Dimensions[dim].SqlType != SqlDbType.DateTime && config.Dimensions[dim].SqlType != SqlDbType.Date)
+                        if (!config.Dimensions[dim].AllowedToFilter && config.Dimensions[dim].SqlType != SqlDbType.DateTime && config.Dimensions[dim].SqlType != SqlDbType.Date)
                             throw new Exception(string.Format("Le paramètre forcedDateFilter est incorrecte : {0} ! ", dim));
 
                         dqFilter.ForcedDateFilter.Add(config.Dimensions[dim]);
@@ -253,7 +254,7 @@ namespace DataQuery.Net
                         if (config.Metrics[met].IsGeography)
                             throw new Exception(string.Format("Vous sélectionnez un type géography, ce qui n'est pas autorisé : {0} ! ", met));
 
-                        if (!config.Metrics[met].AllowedToExport)
+                        if (!config.Metrics[met].AllowedToView)
                             throw new Exception(string.Format("Vous n'avez pas les droits pour exporter cette métrique : {0} ! ", met));
 
                         dqFilter.Metrics.Add(config.Metrics[met]);
@@ -263,10 +264,10 @@ namespace DataQuery.Net
 
 
 
-            //Arrive sous la forme de (test==12,titi>=11);test==12
+            // Converty (test==12,titi>=11);test==12
             //Or = ,
             //And = ;
-            //Comme le queryexplorer de google
+            // Like Google query explorer
             string str = string.Empty;
             if (!string.IsNullOrEmpty(Filters))
             {
@@ -281,7 +282,7 @@ namespace DataQuery.Net
                 }
             }
 
-            //Tri par dimension ou métrique
+            // Order by a specific dimension
             if (!string.IsNullOrEmpty(this.Sort))
             {
                 Sort sortClean = new Sort { Prop = config.Metrics.Values.First(), Asc = this.Asc };
@@ -304,10 +305,10 @@ namespace DataQuery.Net
             // Dependent tables
             foreach (Table table in config.Tables.Values)
             {
-                foreach (DatabaseProp prop in table.Props)
+                foreach (Column prop in table.Props)
                 {
 
-                    foreach (DatabaseProp dim in dqFilter.ForcedDateFilter)
+                    foreach (Column dim in dqFilter.ForcedDateFilter)
                     {
                         if (dim.Alias == prop.Alias)
                         {
@@ -315,7 +316,7 @@ namespace DataQuery.Net
                         }
                     }
 
-                    foreach (DatabaseProp metric in dqFilter.Metrics)
+                    foreach (Column metric in dqFilter.Metrics)
                     {
                         if (metric.Alias == prop.Alias)
                         {
@@ -323,7 +324,7 @@ namespace DataQuery.Net
                         }
                     }
 
-                    foreach (DatabaseProp dim in dqFilter.Dimensions)
+                    foreach (Column dim in dqFilter.Dimensions)
                     {
                         if (dim.Alias == prop.Alias)
                         {

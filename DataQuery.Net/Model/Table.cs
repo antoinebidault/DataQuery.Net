@@ -10,7 +10,7 @@ namespace DataQuery.Net
   {
     public Table()
     {
-      Props = new List<DatabaseProp>();
+      Props = new List<Column>();
       TypeJoin = TypeJoin.INNER;
       Size = DataBaseSize.Standard;
     }
@@ -19,7 +19,7 @@ namespace DataQuery.Net
     public int Order { get; set; }
     public TypeJoin TypeJoin { get; set; }
     public string Alias { get; set; }
-    public List<DatabaseProp> Props { get; set; }
+    public List<Column> Props { get; set; }
     public string DefaultFilterUsedIfTableUsed { get; set; }
     public DataBaseSize Size { get; set; }
     

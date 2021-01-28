@@ -17,14 +17,14 @@ namespace DataQuery.Net
             DateDebut = null;
             DateFin = DateTime.Now;
             Sorts = new List<Sort>() { };
-            Dimensions = new List<DatabaseProp>() { };
-            FullTextQueryConstraints = new List<DatabaseProp>() { };
+            Dimensions = new List<Column>() { };
+            FullTextQueryConstraints = new List<Column>() { };
             Tables = new Dictionary<string, Table>();
-            Metrics = new List<DatabaseProp>() { };
+            Metrics = new List<Column>() { };
             Filters = new List<Filter>() { };
             Inclusions = new List<Inclusion>();
-            ForcedDateFilter = new List<DatabaseProp>();
-            BatchFilters = new Dictionary<DatabaseProp, DataTable>();
+            ForcedDateFilter = new List<Column>();
+            BatchFilters = new Dictionary<Column, DataTable>();
         }
 
         public int? PageSize { get; set; }
@@ -34,17 +34,17 @@ namespace DataQuery.Net
         public DateTime? DateDebut { get; set; }
         public DateTime? DateFin { get; set; }
         public List<Sort> Sorts { get; set; }
-        public List<DatabaseProp> Metrics { get; set; }
-        public List<DatabaseProp> Dimensions { get; set; }
+        public List<Column> Metrics { get; set; }
+        public List<Column> Dimensions { get; set; }
         public bool IsFullTextQuery { get { return !string.IsNullOrEmpty(FullTextQuery); } }
         public string FullTextQuery { get; internal set; }
-        public List<DatabaseProp> FullTextQueryConstraints { get; set; }
+        public List<Column> FullTextQueryConstraints { get; set; }
         public IDictionary<string, Table> Tables { get; set; }
         public List<Filter> Filters { get; set; }
-        public IDictionary<DatabaseProp, DataTable> BatchFilters { get; set; }
-        public DatabaseProp PaginationDimension { get; set; }
+        public IDictionary<Column, DataTable> BatchFilters { get; set; }
+        public Column PaginationDimension { get; set; }
         public List<Inclusion> Inclusions { get; set; }
-        public List<DatabaseProp> ForcedDateFilter { get; set; }
+        public List<Column> ForcedDateFilter { get; set; }
 
         public List<string> GetListOfDimension()
         {
@@ -57,7 +57,7 @@ namespace DataQuery.Net
 
     public class Sort
     {
-        public DatabaseProp Prop { get; set; }
+        public Column Prop { get; set; }
         public bool Asc { get; set; }
     }
 

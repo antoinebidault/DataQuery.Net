@@ -8,14 +8,13 @@ namespace DataQuery.Net
 {
 
     /// <summary>
-    /// Cet objet permet de générer les jointures SQL qui vont bien
-    /// C'est la partie la plus complexe du DataQuery
-    /// Elle utilise l'algorithme de djiskra pour fonctionner
+    /// This generates the SQL tables join
+    /// The most complex part is here
+    /// Uses the djiskra algorithm in order to find the right path
     /// </summary>
     public class SqlJoinBuilder
     {
-
-        DataQueryCollections _config;
+        readonly DataQueryCollections _config;
         IDictionary<string, Table> tablesToLink;
         IDictionary<string, Table> tablesIncluded;
 
@@ -207,8 +206,8 @@ namespace DataQuery.Net
             string output = "";
             if (joining.To != null && joining.From != null)
             {
-                DatabaseProp prop = joining.From.Props.FirstOrDefault(m => m.SqlJoin != null && m.SqlJoin.ContainsKey(joining.To.Name));
-                output += prop.Column + "=" + joining.To.Alias + "." + prop.SqlJoin[joining.To.Name];
+                Column prop = joining.From.Props.FirstOrDefault(m => m.SqlJoin != null && m.SqlJoin.ContainsKey(joining.To.Name));
+                output += prop.ColumnName + "=" + joining.To.Alias + "." + prop.SqlJoin[joining.To.Name];
             }
             return output;
         }

@@ -19,14 +19,14 @@ namespace DataQuery.Net.Sample
                 // L'alias correspond à l'instruction AS du "select from table AS {alias}"
                 Alias = "U",
                 // Les propriétés correspondent à l'ensemble des dimensions ou métriques contenus dans la table que vous souhaitez requêter (Inutile de mettre l'intégralité des colonnes, juste ce dont vous avez besoin)
-                Props = new List<DatabaseProp>
+                Props = new List<Column>
                 {
-                new DatabaseProp()
+                new Column()
                 {
                 // ALias : le nom avec lequel vous souhaitez requêter la propriété
                 Alias = "UserId",
                 // La colonne : correspond à ce qui va être sélectionné par le requêteur. Si c'est uune métrique, il faudra mettre une requête d'aggrégation SUM ou un COUNT
-                Column = "U.Id",
+                ColumnName = "U.Id",
                 // La description du champ
                 Description = "User's id",
                 Label="Userid",
@@ -43,18 +43,18 @@ namespace DataQuery.Net.Sample
                 {"User_Stat", "UserId" }
                 }
                 },
-                new DatabaseProp()
+                new Column()
                 {
                 Alias = "Name",
-                Column = "U.Name",
+                ColumnName = "U.Name",
                 Description = "User's name",
                 Label="Username",
                 Displayed = true
                 },
-                new DatabaseProp()
+                new Column()
                 {
                 Alias = "Email",
-                Column = "U.Email",
+                ColumnName = "U.Email",
                 Description = "Email",
                 Label="Email",
                 Displayed = true
@@ -66,32 +66,32 @@ namespace DataQuery.Net.Sample
             {
                 Name = "User_Stat",
                 Alias = "US",
-                Props = new List<DatabaseProp>
+                Props = new List<Column>
                 {
-                new DatabaseProp()
+                new Column()
                 {
                 Alias = "UserRef",
-                Column = "US.UserId",
+                ColumnName = "US.UserId",
                 Displayed = true,
                 SqlJoin = new Dictionary<string, string>
                 {
                 {"User", "Id" }
                 }
                 },
-                new DatabaseProp()
+                new Column()
                 {
                 Alias = "Date",
-                Column = "US.Date",  
+                ColumnName = "US.Date",  
                 // En passant ce flag à true, cette dimension sera utilisée pour filtrer les dates
                 UsedToFilterDate = true,
                 Description = "Date",
                 SqlType = System.Data.SqlDbType.Date,
                 Displayed = true
                 },
-                new DatabaseProp()
+                new Column()
                 {
                 Alias = "NbConnexion",
-                Column = "SUM(US.NbConnexion)",
+                ColumnName = "SUM(US.NbConnexion)",
                 Description = "NbConnexion",
                 Label="NbConnexion",
                 IsMetric = true,

@@ -67,7 +67,7 @@ namespace DataQuery.Net
 
       if (config.MetricsAndDimensions.ContainsKey(dimOrMetricName))
       {
-        if (!config.MetricsAndDimensions[dimOrMetricName].AllowedToRequest)
+        if (!config.MetricsAndDimensions[dimOrMetricName].AllowedToFilter)
           throw new Exception(string.Format("You don't have the right to access this dimension : {0} ! ", dimOrMetricName));
 
         this.Dimension = config.MetricsAndDimensions[dimOrMetricName];
@@ -93,7 +93,7 @@ namespace DataQuery.Net
     /// <summary>
     /// Ex: eventId
     /// </summary>
-    public DatabaseProp Dimension { get; set; }
+    public Column Dimension { get; set; }
 
     /// <summary>
     /// Si lazy, on affiche le filtre que si la table dépendante est utilisée.

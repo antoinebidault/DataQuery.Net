@@ -1,13 +1,12 @@
 ﻿namespace DataQuery.Net
 {
     /// <summary>
-    /// Configuration du DataQuery branché à l'entrepôt de données
-    /// Définition des tables
+    /// Provides the tables and props definitions
     /// </summary>
     public interface IDataQueryProvider
     {
         /// <summary>
-        /// Return configuration
+        /// Return a data query collections
         /// </summary>
          DataQueryCollections Provide();
     }
