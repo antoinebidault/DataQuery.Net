@@ -32,9 +32,9 @@ namespace DataQuery.Net
 
             this.Prop = config.Dimensions[propName];
             this.Table = config.Tables.Values.FirstOrDefault(m => m.Props.Contains(this.Prop));
-            this.KeyTable = Table.Props.FirstOrDefault(m => m.SqlJoin.Any());
-            this.LinkedTable = config.Tables[KeyTable.SqlJoin.FirstOrDefault().Key];
-            this.LinkedPropertyColumnName = this.LinkedTable.Alias + "." + KeyTable.SqlJoin.FirstOrDefault().Value;
+            this.KeyTable = Table.Props.FirstOrDefault(m => m.SqlJoins.Any());
+            this.LinkedTable = config.Tables[KeyTable.SqlJoins.FirstOrDefault().Key];
+            this.LinkedPropertyColumnName = this.LinkedTable.Alias + "." + KeyTable.SqlJoins.FirstOrDefault().Value;
         }
 
         public Column Prop { get; set; }

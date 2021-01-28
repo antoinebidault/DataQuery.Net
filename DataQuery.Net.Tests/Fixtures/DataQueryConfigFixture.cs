@@ -22,7 +22,7 @@ namespace DataQuery.Net.Tests
             Description = "User's id",
             Label="Userid",
             Displayed = true,
-            SqlJoin = new Dictionary<string, string>
+            SqlJoins = new Dictionary<string, string>
             {
               {"User_Stat", "UserId" }
             }
@@ -57,7 +57,7 @@ namespace DataQuery.Net.Tests
             Alias = "UserIdStat",
             ColumnName = "US.UserId",
             Displayed = true,
-            SqlJoin = new Dictionary<string, string>
+            SqlJoins = new Dictionary<string, string>
             {
               {"User", "UserId" }
             }
@@ -88,11 +88,6 @@ namespace DataQuery.Net.Tests
         public void Dispose()
         {
             this.Config = null;
-        }
-
-        private void ProvisionDatabase()
-        {
-
         }
 
         public DataQueryCollections Config { get; private set; }

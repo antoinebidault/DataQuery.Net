@@ -38,7 +38,7 @@ namespace DataQuery.Net.Sample
                 IsMetric = false,
                 // La jointure SQL à effectuer. La clé correspond au "Name" de la table, la valeur correspond à la propriété de jointure (En SQL, attention, ne pas prendre l'alias de colonne).
                 // Pour que la jointure soit effective, il faut que cette jointure soit faite des deux côtés, dans "User_Stat" et dans "User".
-                SqlJoin = new Dictionary<string, string>
+                SqlJoins = new Dictionary<string, string>
                 {
                 {"User_Stat", "UserId" }
                 }
@@ -73,7 +73,7 @@ namespace DataQuery.Net.Sample
                 Alias = "UserRef",
                 ColumnName = "US.UserId",
                 Displayed = true,
-                SqlJoin = new Dictionary<string, string>
+                SqlJoins = new Dictionary<string, string>
                 {
                 {"User", "Id" }
                 }
