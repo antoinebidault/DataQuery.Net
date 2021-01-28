@@ -15,7 +15,7 @@
             return _repo.Query(_provider.Provide(), filter);
         }
 
-        DataQuerySchemaExposed IDataQuery.GetSchema()
+        public DataQuerySchemaExposed GetSchema()
         {
             return new DataQuerySchemaExposed(_provider.Provide());
         }
