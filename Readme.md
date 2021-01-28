@@ -26,10 +26,13 @@ package-install DataQuery.Net
 
 Sample configuration in Startup.cs ConfigureServices() method :
 ```CSharp
-services.RegisterSqlDataQueryServices(options => {
+services.AddDataQuery(options => {
     options.ConnectionString = "{your SQL Server connection string here}";
 });
-services.RegisterDataQueryProvider<MyAwesomeDataQueryProvider>();
+
+// Register your provider as singleton or whatever. In order to make it dynamic if necessary
+services.AddSingleton<MyAwesomeDataQueryProvider>(); 
+services.AddDataQueryProvider<MyAwesomeDataQueryProvider>();
 ```
 Implement the IDataQueryProvider interface to provide the metrics and dimensions lists to query :
 ```CSharp
