@@ -20,6 +20,7 @@ namespace DataQuery.Net
             this.AllowedToFilter = true;
             this.AllowedToView = true;
             this.Color = "#F86410";
+            MetaDatas = new Dictionary<string, object>();
         }
 
 
@@ -27,6 +28,12 @@ namespace DataQuery.Net
         /// SQL column name, e.g. USER.Name, SUM(USER.NbConnexions)
         /// </summary>
         public string ColumnName { get; set; }
+
+
+        /// <summary>
+        /// A simple metadata dictionnary
+        /// </summary>
+        public IDictionary<string,object> MetaDatas { get; set; }
 
         /// <summary>
         /// SQL Type

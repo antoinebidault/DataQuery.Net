@@ -8,18 +8,16 @@ namespace DataQuery.Net.Sample
 {
     public class UserDataQueryProvider : IDataQueryProvider
     {
-        public DataQueryCollections Provide()
+        public DataQuerySchema Provide()
         {
-            var config = new DataQueryCollections() { };
+            var config = new DataQuerySchema() { };
 
-            config.Tables["User"] = new Table()
+            config.AddTable(new Table("User")
             {
-                // Le nom de la table et la clé passée au dictionnaire de table doivent matcher 
-                Name = "User",
                 // L'alias correspond à l'instruction AS du "select from table AS {alias}"
                 Alias = "U",
                 // Les propriétés correspondent à l'ensemble des dimensions ou métriques contenus dans la table que vous souhaitez requêter (Inutile de mettre l'intégralité des colonnes, juste ce dont vous avez besoin)
-                Props = new List<Column>
+                Columns = new List<Column>
                 {
                 new Column()
                 {
@@ -60,13 +58,12 @@ namespace DataQuery.Net.Sample
                 Displayed = true
                 }
                 }
-            };
+            });
 
-            config.Tables["User_Stat"] = new Table()
+            config.AddTable(new Table("User_Stat")
             {
-                Name = "User_Stat",
                 Alias = "US",
-                Props = new List<Column>
+                Columns = new List<Column>
                 {
                 new Column()
                 {
@@ -98,7 +95,7 @@ namespace DataQuery.Net.Sample
                 Displayed = true
                 }
                 }
-            };
+            });
 
 
             return config;

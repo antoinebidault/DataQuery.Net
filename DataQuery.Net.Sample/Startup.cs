@@ -27,8 +27,6 @@ namespace DataQuery.Net.Sample
         {
             services.AddControllersWithViews();
 
-            services.AddSingleton<UserDataQueryProvider>();
-            services.AddDataQueryProvider<UserDataQueryProvider>();
             services.AddDataQuery(options =>
             {
                 if (Env.IsDevelopment())
@@ -37,6 +35,8 @@ namespace DataQuery.Net.Sample
                 }
                 options.ConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=DataQuery;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             });
+            services.AddSingleton<UserDataQueryProvider>();
+            services.AddDataQueryProvider<UserDataQueryProvider>();
 
         }
 

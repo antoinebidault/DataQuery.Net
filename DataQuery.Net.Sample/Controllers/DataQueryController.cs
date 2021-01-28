@@ -17,11 +17,17 @@ namespace DataQuery.Net.Sample.Controllers
             _dataQuery = dataQuery;
         }
 
-
         [HttpGet]
         public IActionResult Index([FromQuery] DataQueryFilterParams param)
         {
             var results = _dataQuery.Query(param);
+            return Ok(results);
+        }
+
+        [HttpGet]
+        public IActionResult Schema()
+        {
+            var results = _dataQuery.GetSchema();
             return Ok(results);
         }
 

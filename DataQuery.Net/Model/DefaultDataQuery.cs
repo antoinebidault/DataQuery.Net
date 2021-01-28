@@ -14,9 +14,12 @@
         {
             return _repo.Query(_provider.Provide(), filter);
         }
+
+        DataQuerySchemaExposed IDataQuery.GetSchema()
+        {
+            return new DataQuerySchemaExposed(_provider.Provide());
+        }
     }
-
-
 
 
 }

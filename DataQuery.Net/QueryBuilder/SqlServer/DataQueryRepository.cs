@@ -18,7 +18,7 @@ namespace DataQuery.Net
             this._options = options;
         }
 
-        public DataQueryResult Query(DataQueryCollections config, DataQueryFilterParams filter)
+        public DataQueryResult Query(DataQuerySchema config, DataQueryFilterParams filter)
         {
             string uniqueKey = _options.CacheKeyPrefix + "_" + (JsonConvert.SerializeObject(filter)).ToGuid().ToString();
 
@@ -34,7 +34,7 @@ namespace DataQuery.Net
             return QueryBase(config, filter);
         }
 
-        private DataQueryResult QueryBase(DataQueryCollections config, DataQueryFilterParams filterParams)
+        private DataQueryResult QueryBase(DataQuerySchema config, DataQueryFilterParams filterParams)
         {
             var builder = new DataQuerySqlServerBuilder(_options);
             return builder.Query(config, filterParams);

@@ -6,38 +6,39 @@ using System.Threading.Tasks;
 
 namespace DataQuery.Net
 {
-  public class Table
-  {
-    public Table()
+    public class Table
     {
-      Props = new List<Column>();
-      TypeJoin = TypeJoin.INNER;
-      Size = DataBaseSize.Standard;
+        public Table(string tableName)
+        {
+            this.Name = tableName;
+            Columns = new List<Column>();
+            TypeJoin = TypeJoin.INNER;
+            Size = DataBaseSize.Standard;
+        }
+        public bool SupportFreeText { get; set; }
+        public string Name { get; }
+        public int Order { get; set; }
+        public TypeJoin TypeJoin { get; set; }
+        public string Alias { get; set; }
+        public List<Column> Columns { get; set; }
+        public string DefaultFilterUsedIfTableUsed { get; set; }
+        public DataBaseSize Size { get; set; }
+
     }
-    public bool SupportFreeText { get; set; }
-    public string Name { get; set; }
-    public int Order { get; set; }
-    public TypeJoin TypeJoin { get; set; }
-    public string Alias { get; set; }
-    public List<Column> Props { get; set; }
-    public string DefaultFilterUsedIfTableUsed { get; set; }
-    public DataBaseSize Size { get; set; }
-    
-  }
 
-  public enum DataBaseSize
-  {
-    Small = 0,
-    Standard,
-    Big,
-    VeryBig
-  }
+    public enum DataBaseSize
+    {
+        Small = 0,
+        Standard,
+        Big,
+        VeryBig
+    }
 
-  public enum TypeJoin
-  {
-    INNER,
-    LEFTOUTER
-  }
+    public enum TypeJoin
+    {
+        INNER,
+        LEFTOUTER
+    }
 
 
 }

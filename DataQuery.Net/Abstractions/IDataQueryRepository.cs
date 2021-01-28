@@ -2,6 +2,6 @@
 {
   public interface IDataQueryRepository
   {
-    DataQueryResult Query(DataQueryCollections config, DataQueryFilterParams filter);
+    DataQueryResult Query(DataQuerySchema config, DataQueryFilterParams filter);
   }
 }

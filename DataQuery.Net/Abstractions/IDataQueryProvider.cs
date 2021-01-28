@@ -8,6 +8,6 @@
         /// <summary>
         /// Return a data query collections
         /// </summary>
-         DataQueryCollections Provide();
+         DataQuerySchema Provide();
     }
 }

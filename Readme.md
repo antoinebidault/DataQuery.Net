@@ -44,14 +44,14 @@ Implement the IDataQueryProvider interface to provide the metrics and dimensions
       var cnx = "Ma chaine de connexion à la BDD ici";
       var config = new DataQueryCollections() { };
 
-      config.Tables["User"] = new Table()
+      config.AddTable( new Table("User")
       {
         // The table name, it must match the key name
         Name = "User",
         // The AS alias "select from table AS {alias}"
         Alias = "U",
         // The properties you would like to query (Just the columns you need to query or used in relationships)
-        Props = new List<Column>
+        Columns = new List<Column>
         {
           new Column()
           {
@@ -92,9 +92,9 @@ Implement the IDataQueryProvider interface to provide the metrics and dimensions
             Displayed = true
           }
         }
-      };
+      });
 
-      config.Tables["User_Stat"] = new Table()
+      config.AddTable(new Table("User_Stat")
       {
         Name = "User_Stat",
         Alias = "US",

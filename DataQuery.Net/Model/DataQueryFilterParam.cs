@@ -112,7 +112,7 @@ namespace DataQuery.Net
         /// </summary>
         /// <param name="dqFilter"></param>
         /// <param name="config"></param>
-        public void BindTo(DataQueryFilter dqFilter, DataQueryCollections config)
+        public void BindTo(DataQueryFilter dqFilter, DataQuerySchema config)
         {
             dqFilter.Random = Random;
             dqFilter.DateDebut = Start;
@@ -305,7 +305,7 @@ namespace DataQuery.Net
             // Dependent tables
             foreach (Table table in config.Tables.Values)
             {
-                foreach (Column prop in table.Props)
+                foreach (Column prop in table.Columns)
                 {
 
                     foreach (Column dim in dqFilter.ForcedDateFilter)

@@ -14,7 +14,7 @@ namespace DataQuery.Net
     /// </summary>
     public class SqlJoinBuilder
     {
-        readonly DataQueryCollections _config;
+        readonly DataQuerySchema _config;
         IDictionary<string, Table> tablesToLink;
         IDictionary<string, Table> tablesIncluded;
 
@@ -22,7 +22,7 @@ namespace DataQuery.Net
         /// Nécessite la config du dataquery
         /// </summary>
         /// <param name="config">Config du DataQuery</param>
-        public SqlJoinBuilder(DataQueryCollections config)
+        public SqlJoinBuilder(DataQuerySchema config)
         {
             this._config = config;
         }
@@ -64,7 +64,7 @@ namespace DataQuery.Net
             {
                 foreach (var table in _config.Tables.Values)
                 {
-                    foreach (var prop in table.Props)
+                    foreach (var prop in table.Columns)
                     {
                         if (val == prop.Alias)
                         {
@@ -135,7 +135,7 @@ namespace DataQuery.Net
             foreach (Table table in _config.Tables.Values)
             {
                 neurons[table] = new Dictionary<Table, int>();
-                foreach (var link in table.Props.SelectMany(m => m.SqlJoins))
+                foreach (var link in table.Columns.SelectMany(m => m.SqlJoins))
                 {
                     if (_config.Tables.ContainsKey(link.Key))
                     {
@@ -206,7 +206,7 @@ namespace DataQuery.Net
             string output = "";
             if (joining.To != null && joining.From != null)
             {
-                Column prop = joining.From.Props.FirstOrDefault(m => m.SqlJoins != null && m.SqlJoins.ContainsKey(joining.To.Name));
+                Column prop = joining.From.Columns.FirstOrDefault(m => m.SqlJoins != null && m.SqlJoins.ContainsKey(joining.To.Name));
                 output += prop.ColumnName + "=" + joining.To.Alias + "." + prop.SqlJoins[joining.To.Name];
             }
             return output;

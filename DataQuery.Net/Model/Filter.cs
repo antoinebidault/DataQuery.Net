@@ -13,7 +13,7 @@ namespace DataQuery.Net
   /// </summary>
   public class Filter
   {
-    public Filter(string filter, DataQueryCollections config)
+    public Filter(string filter, DataQuerySchema config)
     {
       IsLazy = false;
 

@@ -18,7 +18,7 @@ namespace DataQuery.Net
             this._options = options;
         }
 
-        private DataQueryCollections _config { get; set; }
+        private DataQuerySchema _config { get; set; }
         private List<string> _sqlSelect;
         private List<string> _sqlGroupBy;
         private List<string> _sqlWhere;
@@ -36,7 +36,7 @@ namespace DataQuery.Net
         /// <param name="param"></param>
         /// <param name="conf"></param>
         /// <returns></returns>
-        public DataQueryResult Query(DataQueryCollections conf, DataQueryFilterParams param)
+        public DataQueryResult Query(DataQuerySchema conf, DataQueryFilterParams param)
         {
             // Set size
             if (param.Size > _options.MaxRecordsetSize)
@@ -440,7 +440,7 @@ namespace DataQuery.Net
                     throw new Exception("Full text query is not supported");
 
                 //Test if some requested dimensions are in fulltext index 
-                if (!fullTextQueryTable.Props.Any(m => !m.IsMetric && filters.Dimensions.Select(s => s.Alias).Contains(m.Alias)))
+                if (!fullTextQueryTable.Columns.Any(m => !m.IsMetric && filters.Dimensions.Select(s => s.Alias).Contains(m.Alias)))
                     throw new Exception(string.Format("This dimension does not belong to {0} which contains the fulltext index", fullTextQueryTable.Name));
 
                 string fullTextSearchColumns = string.Format("{0}.*", fullTextQueryTable.Alias);
@@ -505,7 +505,7 @@ namespace DataQuery.Net
             if (filters.ForcedDateFilter.Any())
                 dateProps = filters.ForcedDateFilter;
             else
-                dateProps = filters.Tables.Values.SelectMany(m => m.Props).Where(m => m.UsedToFilterDate).ToList();
+                dateProps = filters.Tables.Values.SelectMany(m => m.Columns).Where(m => m.UsedToFilterDate).ToList();
 
             int i = 1;
             if (dateProps.Any())

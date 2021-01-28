@@ -7,7 +7,7 @@ namespace DataQuery.Net
 {
     public class Inclusion
     {
-        public Inclusion(string inclusion, DataQueryCollections config)
+        public Inclusion(string inclusion, DataQuerySchema config)
         {
             string[] dims = inclusion.Split(':');
             string propName = dims[0];
@@ -31,8 +31,8 @@ namespace DataQuery.Net
                 throw new DataQueryException($"You are not allowed to access this dimension : {propName} ! ");
 
             this.Prop = config.Dimensions[propName];
-            this.Table = config.Tables.Values.FirstOrDefault(m => m.Props.Contains(this.Prop));
-            this.KeyTable = Table.Props.FirstOrDefault(m => m.SqlJoins.Any());
+            this.Table = config.Tables.Values.FirstOrDefault(m => m.Columns.Contains(this.Prop));
+            this.KeyTable = Table.Columns.FirstOrDefault(m => m.SqlJoins.Any());
             this.LinkedTable = config.Tables[KeyTable.SqlJoins.FirstOrDefault().Key];
             this.LinkedPropertyColumnName = this.LinkedTable.Alias + "." + KeyTable.SqlJoins.FirstOrDefault().Value;
         }

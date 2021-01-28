@@ -6,5 +6,6 @@
     public interface IDataQuery
     {
         DataQueryResult Query(DataQueryFilterParams filter);
+        DataQuerySchemaExposed GetSchema();
     }
 }

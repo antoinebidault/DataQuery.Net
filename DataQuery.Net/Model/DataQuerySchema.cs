@@ -5,18 +5,29 @@ using System.Linq;
 
 namespace DataQuery.Net
 {
+
+
     /// <summary>
     /// Contains all informations about the database
     /// </summary>
-    public class DataQueryCollections
+    public class DataQuerySchema
     {
-        public DataQueryCollections()
+        public DataQuerySchema()
         {
             Tables = new Dictionary<string, Table>(StringComparer.InvariantCultureIgnoreCase);
         }
 
-        public Dictionary<string, Table> Tables { get; set; }
+        public void AddTable(Table table)
+        {
+            this.Tables.Add(table.Name, table);
+        }
 
+        public void RemoveTable(string tableName)
+        {
+            this.Tables.Remove(tableName);
+        }
+        
+        public Dictionary<string, Table> Tables { get; }
         public Dictionary<string, Column> Metrics
         {
             get
@@ -55,7 +66,7 @@ namespace DataQuery.Net
                 var dic = new Dictionary<string, Column>();
                 foreach (var table in Tables.Values)
                 {
-                    foreach (var prop in table.Props)
+                    foreach (var prop in table.Columns)
                     {
                         dic[prop.Alias] = prop;
                     }
