@@ -16,7 +16,7 @@ namespace DataQuery.Net
         {
             this.SqlType = SqlDbType.NVarChar;
             this.Displayed = true;
-            this.SqlJoin = new Dictionary<string, string>();
+            this.SqlJoins = new Dictionary<string, string>();
             this.AllowedToFilter = true;
             this.AllowedToView = true;
         }
@@ -93,8 +93,8 @@ namespace DataQuery.Net
         public bool UsedToFilterDate { get; set; }
 
         /// <summary>
-        /// Jointures SQL à appliquer sur la propriété => "Nom de la table" > "Nom de la clé associée"
+        /// Sql joins
         /// </summary>
-        public Dictionary<string, string> SqlJoin { get; set; }
+        public Dictionary<string, string> SqlJoins { get; set; }
     }
 }

@@ -48,7 +48,7 @@ Implement the IDataQueryProvider interface to provide the metrics and dimensions
         // The AS alias "select from table AS {alias}"
         Alias = "U",
         // The properties you would like to query (Just the columns you need to query or used in relationships)
-        Props = new List<DatabaseProp>
+        Props = new List<Column>
         {
           new Column()
           {
@@ -67,7 +67,7 @@ Implement the IDataQueryProvider interface to provide the metrics and dimensions
             IsMetric = false,
             // SQL join. The key is the "Name" of the target table, the value is the name of the prop (IN SQL, do not take the alias).
             // The sql join must be done in the both side. In this use case, in "User_Stat" => to User.id and "User" => to User_State.UserId.
-            SqlJoin = new Dictionary<string, string>
+            SqlJoins = new Dictionary<string, string>
             {
               {"User_Stat", "UserId" }
             }
@@ -95,14 +95,14 @@ Implement the IDataQueryProvider interface to provide the metrics and dimensions
       {
         Name = "User_Stat",
         Alias = "US",
-        Props = new List<DatabaseProp>
+        Props = new List<Column>
         {
           new Column()
           {
             Alias = "UserRef",
             ColumnName = "US.UserId",
             Displayed = true,
-            SqlJoin = new Dictionary<string, string>
+            SqlJoins = new Dictionary<string, string>
             {
               {"User", "UserId" }
             }
@@ -110,7 +110,7 @@ Implement the IDataQueryProvider interface to provide the metrics and dimensions
           new Column()
           {
             Alias = "Date",
-            Column = "US.Date",  
+            ColumnName = "US.Date",  
 			// This dimension will be used to filter date by default
 			UsedToFilterDate = true,
             Description = "Date",
@@ -120,7 +120,7 @@ Implement the IDataQueryProvider interface to provide the metrics and dimensions
           new Column()
           {
             Alias = "NbConnexion",
-            Column = "SUM(U.NbConnexion)",
+            ColumnName = "SUM(U.NbConnexion)",
             Description = "NbConnexion",
             Label="NbConnexion",
             IsMetric = true,
