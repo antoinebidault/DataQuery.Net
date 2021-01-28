@@ -24,7 +24,7 @@ namespace DataQuery.Net.Sample.Controllers
             return Ok(results);
         }
 
-        [HttpGet]
+        [HttpGet("schema")]
         public IActionResult Schema()
         {
             var results = _dataQuery.GetSchema();

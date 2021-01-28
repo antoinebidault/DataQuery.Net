@@ -7,8 +7,13 @@ namespace DataQuery.Net
     {
         public DataQuerySchemaExposed(DataQuerySchema schema)
         {
-            this.Dimensions = schema.Dimensions.Select(m => new DataQuerySchemaExposedColumn(m.Value));
-            this.Metrics = schema.Metrics.Select(m => new DataQuerySchemaExposedColumn(m.Value));
+            this.Dimensions = schema.Dimensions
+                .Where(m=>m.Value.Displayed)
+                .Select(m => new DataQuerySchemaExposedColumn(m.Value));
+
+            this.Metrics = schema.Metrics
+                .Where(m => m.Value.Displayed)
+                .Select(m => new DataQuerySchemaExposedColumn(m.Value));
         }
 
         public IEnumerable<DataQuerySchemaExposedColumn> Metrics { get; set; }
