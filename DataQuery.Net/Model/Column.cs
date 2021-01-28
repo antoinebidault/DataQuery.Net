@@ -19,6 +19,7 @@ namespace DataQuery.Net
             this.SqlJoins = new Dictionary<string, string>();
             this.AllowedToFilter = true;
             this.AllowedToView = true;
+            this.Color = "#F86410";
         }
 
 
