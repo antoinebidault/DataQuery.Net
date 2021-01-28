@@ -1,6 +1,8 @@
+
 [![Build status](https://ci.appveyor.com/api/projects/status/c91s60qb1aj8bsps?svg=true)](https://ci.appveyor.com/project/antoinebidault/dataquery-net)
 ![Nuget](https://img.shields.io/nuget/v/DataQuery.Net)
 
+![Logo dataquery](logo-dataquery.png)
 # DataQuery.Net
 The data query is an ASP.Net Core library for querying dynamically huge database using a basic querying language similar to Google analytics's API Explorer querying language (dimensions, metrics, filters...) .
 This tool was particularly useful for building a custom analytic tools on a bug database using millions of lines.
@@ -8,7 +10,8 @@ This tool was particularly useful for building a custom analytic tools on a bug 
 # Prerequisite
 You need an SQL database on SQL Server 2012+
 ASP.Net Core 3.1
-You'll need an sql database structured as a star : (https://en.wikipedia.org/wiki/Star_schema)[https://en.wikipedia.org/wiki/Star_schema]
+You'll need an sql database structured as a star :
+[https://en.wikipedia.org/wiki/Star_schema](https://en.wikipedia.org/wiki/Star_schema)
 ![Database star model](database-star-model.png)
 
 # Quickstart 
@@ -55,9 +58,9 @@ Implement the IDataQueryProvider interface to provide the metrics and dimensions
             Label="Userid",
             // Le type SQL du champ sera utile pour parser les dimensions sélectionnés.
             SqlType = SqlDbType.Int,
-            // Ce flag permet de déterminer si c'est une dimension visible ou non
+            // Set as visible or no
             Displayed = true,
-            // A false par défaut, cette variable permet de déterminer si c'est une métrique ou non. Si s'en est une elle sera exclue automatiquement de la clause groupby. Si elle n'aggrège rien, il y aura une erreur
+            // True if it's a metric
             IsMetric = false,
             // SQL join. The key is the "Name" of the target table, the value is the name of the prop (IN SQL, do not take the alias).
             // The sql join must be done in the both side. In this use case, in "User_Stat" => to User.id and "User" => to User_State.UserId.
