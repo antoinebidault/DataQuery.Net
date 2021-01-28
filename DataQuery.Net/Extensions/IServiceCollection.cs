@@ -16,14 +16,14 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             var dataQueryOptions = DataQueryOptions.Defaults;
             dataQueryOptions.ConnectionString = connectionString;
-            return services.RegisterSqlDataQueryServices(dataQueryOptions);
+            return services.AddDataQuery(dataQueryOptions);
         }
 
         public static IServiceCollection AddDataQuery(this IServiceCollection services, Action<DataQueryOptions> optionsBuilder)
         {
             var dataQueryOptions = DataQueryOptions.Defaults;
             optionsBuilder.Invoke(dataQueryOptions);
-            return services.RegisterSqlDataQueryServices(dataQueryOptions);
+            return services.AddDataQuery(dataQueryOptions);
         }
 
         public static IServiceCollection AddDataQuery(this IServiceCollection services, DataQueryOptions options)

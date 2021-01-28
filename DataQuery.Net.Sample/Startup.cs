@@ -28,8 +28,8 @@ namespace DataQuery.Net.Sample
             services.AddControllersWithViews();
 
             services.AddSingleton<UserDataQueryProvider>();
-            services.RegisterDataQueryProvider<UserDataQueryProvider>();
-            services.RegisterSqlDataQueryServices(options =>
+            services.AddDataQueryProvider<UserDataQueryProvider>();
+            services.AddDataQuery(options =>
             {
                 if (Env.IsDevelopment())
                 {
