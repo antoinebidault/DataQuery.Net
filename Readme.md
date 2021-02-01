@@ -8,7 +8,7 @@ The data query is an ASP.Net Core library for querying dynamically huge database
 This tool was particularly useful for building a custom analytic tools on a bug database using millions of lines. If you need to do lots of dynamics queries, time series, pie charts, this library can be particularly useful.
 
 # Disclaimer
-Use it at your own risk, this library is still WIP and needs some refactoring, testing improvements. 
+Use it at your own risk, this library is still WIP and needs some refactoring and testing improvements. 
 
 # Prerequisite
 You need an SQL database on SQL Server 2012+
@@ -55,11 +55,11 @@ Implement the IDataQueryProvider interface to provide the metrics and dimensions
         {
           new Column()
           {
-			// ALias : The unique name of the dim or metric
+	    // ALias : The unique name of the dim or metric
             Alias = "UserId",
-			// La colonne : correspond à ce qui va être sélectionné par le requêteur. If it's a metric, you must use the proper aggregation operator : e.g. SUM(), AVG(), COUNT()...
+	    // If it's a metric, you must use the proper aggregation operator : e.g. SUM(), AVG(), COUNT()...
             ColumnName = "U.Id",
-			// Field description
+	    // Field description
             Description = "User's id",
             Label="Userid",
             // Le type SQL du champ sera utile pour parser les dimensions sélectionnés.
@@ -172,8 +172,7 @@ Here is a sample query to get the nb connexions per date on 2 weeks for Jean-Mar
 ```
 
 
-# Paramètre des requêtes
-Query params list :
+# Query params list
 - aggregate : wether the data are grouped or not
 - size : size of the recordset (paginated results)
 - page : page index
