@@ -37,7 +37,15 @@ namespace DataQuery.Net
         private DataQueryResult QueryBase(DataQuerySchema config, DataQueryFilterParams filterParams)
         {
             var builder = new DataQuerySqlServerBuilder(_options);
-            return builder.Query(config, filterParams);
+
+            // Transform input parameted to clean dataQueryFilter object
+            var filters = filterParams.Parse(config);
+
+            var query = builder.Query(config, filters);
+
+            query.Filter = filterParams;
+
+            return query;
         }
     }
 }

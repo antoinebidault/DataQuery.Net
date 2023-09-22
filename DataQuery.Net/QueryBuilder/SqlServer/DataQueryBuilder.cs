@@ -36,12 +36,12 @@ namespace DataQuery.Net
         /// <param name="param"></param>
         /// <param name="conf"></param>
         /// <returns></returns>
-        public DataQueryResult Query(DataQuerySchema conf, DataQueryFilterParams param)
+        public DataQueryResult Query(DataQuerySchema conf, DataQueryFilter filters)
         {
             // Set size
-            if (param.Size > _options.MaxRecordsetSize)
+            if (filters.PageSize > _options.MaxRecordsetSize)
             {
-                param.Size = _options.MaxRecordsetSize;
+                filters.PageSize = _options.MaxRecordsetSize;
             }
 
             //Define config in global scope
@@ -57,16 +57,11 @@ namespace DataQuery.Net
             this._whereStatement = new StringBuilder();
             this.firstWhereStatement = true;
 
-            // Transform input parameted to clean dataQueryFilter object
-            var filters = new DataQueryFilter();
-            param.Parse(filters, _config);
-
             SqlJoinBuilder builder = new SqlJoinBuilder(conf);
             string joinString = builder.JoinSqlString(filters.GetListOfDimension());
 
             // Query results
             var result = new DataQueryResult();
-            result.Filter = param;
 
             StringBuilder sqlSelectQuery = new StringBuilder();
             StringBuilder sqlCountQuery = new StringBuilder();

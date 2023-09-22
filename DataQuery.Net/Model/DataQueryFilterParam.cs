@@ -95,8 +95,9 @@ namespace DataQuery.Net
         /// </summary>
         /// <param name="dqFilter"></param>
         /// <param name="config"></param>
-        public void Parse(DataQueryFilter dqFilter, DataQuerySchema config)
+        public DataQueryFilter Parse(DataQuerySchema config)
         {
+            var dqFilter = new DataQueryFilter();
             dqFilter.Random = Random;
             dqFilter.FullTextQuery = Query;
 
@@ -324,9 +325,7 @@ namespace DataQuery.Net
                     }
                 }
             }
+            return dqFilter;
         }
     }
-
-
-
 }
