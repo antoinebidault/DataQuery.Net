@@ -19,7 +19,7 @@ namespace DataQuery.Net.Tests
                     Alias = "UserId",
                     ColumnName = "U.Id",
                     Description = "User's id",
-                    Label="Userid",
+                    DisplayName="Userid",
                     Displayed = true,
                     SqlJoins = new Dictionary<string, string>
                     {
@@ -31,7 +31,7 @@ namespace DataQuery.Net.Tests
                     Alias = "Name",
                     ColumnName = "U.Name",
                     Description = "User's name",
-                    Label="Username",
+                    DisplayName="Username",
                     Displayed = true
                     },
                     new Column()
@@ -39,7 +39,7 @@ namespace DataQuery.Net.Tests
                     Alias = "Email",
                     ColumnName = "U.Email",
                     Description = "Email",
-                    Label="Email",
+                    DisplayName="Email",
                     Displayed = true
                     }
                 }
@@ -74,7 +74,7 @@ namespace DataQuery.Net.Tests
                     Alias = "NbConnexion",
                     ColumnName = "SUM(U.NbConnexion)",
                     Description = "NbConnexion",
-                    Label="NbConnexion",
+                    DisplayName="NbConnexion",
                     IsMetric = true,
                     Displayed = true
                     }

@@ -14,8 +14,6 @@ namespace DataQuery.Net
     {
         public DataQueryFilter()
         {
-            DateDebut = null;
-            DateFin = DateTime.Now;
             Sorts = new List<Sort>() { };
             Dimensions = new List<Column>() { };
             FullTextQueryConstraints = new List<Column>() { };
@@ -31,8 +29,6 @@ namespace DataQuery.Net
         public int? PageIndex { get; set; }
         public bool Aggregate { get; set; } = true;
         public bool Random { get; set; }
-        public DateTime? DateDebut { get; set; }
-        public DateTime? DateFin { get; set; }
         public List<Sort> Sorts { get; set; }
         public List<Column> Metrics { get; set; }
         public List<Column> Dimensions { get; set; }

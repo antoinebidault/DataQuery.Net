@@ -33,7 +33,7 @@ namespace DataQuery.Net
         /// <summary>
         /// A simple metadata dictionnary
         /// </summary>
-        public IDictionary<string,object> MetaDatas { get; set; }
+        public IDictionary<string, object> MetaDatas { get; set; }
 
         /// <summary>
         /// SQL Type
@@ -48,7 +48,7 @@ namespace DataQuery.Net
         /// <summary>
         /// User friendly label
         /// </summary>
-        public string Label { get; set; }
+        public string DisplayName { get; set; }
 
         /// <summary>
         /// Column definition

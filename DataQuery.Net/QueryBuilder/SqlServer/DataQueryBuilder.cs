@@ -59,7 +59,7 @@ namespace DataQuery.Net
 
             // Transform input parameted to clean dataQueryFilter object
             var filters = new DataQueryFilter();
-            param.BindTo(filters, _config);
+            param.Parse(filters, _config);
 
             SqlJoinBuilder builder = new SqlJoinBuilder(conf);
             string joinString = builder.JoinSqlString(filters.GetListOfDimension());
@@ -131,7 +131,7 @@ namespace DataQuery.Net
             }
 
             // Startdate and end date
-            AppendDateQuery(filters);
+            // AppendDateQuery(filters);
 
             // Filters on dimensions
             IEnumerable<Filter> filtersOnDimension = filters.Filters.Where(m => !m.Dimension.IsMetric);
@@ -235,7 +235,7 @@ namespace DataQuery.Net
                                     var column = new DataQueryColumn();
                                     var metric = _config.MetricsAndDimensions[reader.GetName(i)];
                                     column.Name = metric.Alias;
-                                    column.Label = metric.Label;
+                                    column.Label = metric.DisplayName;
                                     column.IsMetric = metric.IsMetric;
                                     column.Unite = metric.Unit;
                                     column.Color = metric.Color;
@@ -494,6 +494,7 @@ namespace DataQuery.Net
         /// <summary>
         /// Build a date query
         /// </summary>
+        /*
         private void AppendDateQuery(DataQueryFilter filters)
         {
             if (!filters.DateDebut.HasValue && !filters.DateFin.HasValue)
@@ -522,7 +523,7 @@ namespace DataQuery.Net
                     i++;
                 }
             }
-        }
+        }*/
 
 
         private void AppendInclusion(List<Inclusion> inclusions)

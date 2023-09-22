@@ -20,19 +20,18 @@ namespace DataQuery.Net.Tests
         Aggregate = false,
         Size = 10,
         Page = 1,
-        Dimensions = "Name,Email,Date",
+        Dimensions = "User.Name,User.Email,User_Stats.Date",
         Asc = true,
-        Period = "2d",
-        Filters = "Name=~Jean Marc%",
+        Filters = "User.Name=~Jean Marc%",
         Metrics = "NbConnexion"
       };
 
       var cleanFilter = new DataQueryFilter();
-      result.BindTo(cleanFilter, fixture.Config);
+      result.Parse(cleanFilter, fixture.Config);
 
       Assert.Equal(3, cleanFilter.Dimensions.Count);
       Assert.Single(cleanFilter.Metrics);
-      Assert.Equal(cleanFilter.DateDebut.Value.Date, DateTime.Now.AddDays(-2).Date);
+      //  Assert.Equal(cleanFilter.DateDebut.Value.Date, DateTime.Now.AddDays(-2).Date);
     }
   }
 }

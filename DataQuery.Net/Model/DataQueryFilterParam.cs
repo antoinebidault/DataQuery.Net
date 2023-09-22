@@ -40,23 +40,6 @@ namespace DataQuery.Net
         public string QueryConstraints { get; set; }
 
         /// <summary>
-        /// Start date
-        /// </summary>
-        public DateTime? Start { get; set; }
-
-        /// <summary>
-        /// End of analyze
-        /// </summary>
-        public DateTime? End { get; set; }
-
-        /// <summary>
-        /// Querying period : 1w = 1 semaine, 3m = 3mois
-        /// If provided, Start and End will be ignored
-        /// </summary>
-        [RegularExpression(@"^[0-9]{1,2}[dhmwy]$")]
-        public string Period { get; set; }
-
-        /// <summary>
         /// database columns alias used to sort data (1 at a time)
         /// </summary>
         public string Sort { get; set; }
@@ -112,13 +95,13 @@ namespace DataQuery.Net
         /// </summary>
         /// <param name="dqFilter"></param>
         /// <param name="config"></param>
-        public void BindTo(DataQueryFilter dqFilter, DataQuerySchema config)
+        public void Parse(DataQueryFilter dqFilter, DataQuerySchema config)
         {
             dqFilter.Random = Random;
-            dqFilter.DateDebut = Start;
-            dqFilter.DateFin = End;
             dqFilter.FullTextQuery = Query;
 
+
+            /*
             if (!string.IsNullOrEmpty(this.Period))
             {
                 try
@@ -150,7 +133,7 @@ namespace DataQuery.Net
                 {
                     throw new Exception("Impossible de parser le paramètre pédiode");
                 }
-            }
+            }*/
 
             dqFilter.PageSize = Size;
             dqFilter.PageIndex = Page;

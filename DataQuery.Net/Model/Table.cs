@@ -10,6 +10,7 @@ namespace DataQuery.Net
     {
         public Table(string tableName)
         {
+            this.DisplayName = tableName;
             this.Name = tableName;
             Columns = new List<Column>();
             TypeJoin = TypeJoin.INNER;
@@ -23,6 +24,9 @@ namespace DataQuery.Net
         public List<Column> Columns { get; set; }
         public string DefaultFilterUsedIfTableUsed { get; set; }
         public DataBaseSize Size { get; set; }
+        public bool IsRoot { get; set; }
+        public string DisplayName { get; set; }
+
 
     }
 
