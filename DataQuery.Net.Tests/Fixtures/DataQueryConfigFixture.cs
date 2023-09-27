@@ -12,6 +12,7 @@ namespace DataQuery.Net.Tests
             Config.AddTable(new Table("User")
             {
                 Alias = "U",
+               Root = true,
                 Columns = new List<Column>
                 {
                     new Column()
@@ -52,31 +53,31 @@ namespace DataQuery.Net.Tests
                 {
                     new Column()
                     {
-                    Alias = "UserIdStat",
-                    ColumnName = "US.UserId",
-                    Displayed = true,
-                    SqlJoins = new Dictionary<string, string>
-                    {
-                        {"User", "UserId" }
-                    }
+                         Alias = "UserIdStat",
+                        ColumnName = "US.UserId",
+                        Displayed = true,
+                        SqlJoins = new Dictionary<string, string>
+                        {
+                            {"User", "UserId" }
+                        }
                     },
                     new Column()
                     {
-                    Alias = "Date",
-                    ColumnName = "US.Date",
-                    Description = "Date",
-                    UsedToFilterDate = true,
-                    SqlType = System.Data.SqlDbType.Date,
-                    Displayed = true
+                        Alias = "Date",
+                        ColumnName = "US.Date",
+                        Description = "Date",
+                        UsedToFilterDate = true,
+                        SqlType = System.Data.SqlDbType.Date,
+                        Displayed = true
                     },
                     new Column()
                     {
-                    Alias = "NbConnexion",
-                    ColumnName = "SUM(U.NbConnexion)",
-                    Description = "NbConnexion",
-                    DisplayName="NbConnexion",
-                    IsMetric = true,
-                    Displayed = true
+                        Alias = "NbConnexion",
+                        ColumnName = "SUM(U.NbConnexion)",
+                        Description = "NbConnexion",
+                        DisplayName="NbConnexion",
+                        IsMetric = true,
+                        Displayed = true
                     }
                 }
             });

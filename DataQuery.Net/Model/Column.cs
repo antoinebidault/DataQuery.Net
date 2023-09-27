@@ -23,7 +23,6 @@ namespace DataQuery.Net
             MetaDatas = new Dictionary<string, object>();
         }
 
-
         /// <summary>
         /// SQL column name, e.g. USER.Name, SUM(USER.NbConnexions)
         /// </summary>
@@ -36,14 +35,32 @@ namespace DataQuery.Net
         public IDictionary<string, object> MetaDatas { get; set; }
 
         /// <summary>
-        /// SQL Type
+        /// SQL Type overiden (use the native type if you don't care)
         /// </summary>
-        public SqlDbType SqlType { get; set; }
+        public SqlDbType? SqlType { get; set; }
+
+        /// <summary>
+        /// Native type
+        /// </summary>
+        public Type PropertyType { get; set; } = typeof(string);
+
+        public SqlDbType SqlTypeAuto
+        {
+            get
+            {
+                if (SqlType.HasValue)
+                {
+                    return this.SqlType.Value;
+                }
+
+                return PropertyType.GetDbType();
+            }
+        }
 
         /// <summary>
         /// SQL Alias used to call this prop in the front channel (using the dataqueryfilterparams)
         /// </summary>
-        public string Alias { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// User friendly label
@@ -103,6 +120,14 @@ namespace DataQuery.Net
         /// <summary>
         /// Sql joins
         /// </summary>
-        public Dictionary<string, string> SqlJoins { get; set; }
+        public Dictionary<string, string> SqlJoins { get; set; } 
+        public IEnumerable<ColumnValue> Values { get; set; }
+    }
+
+    public class ColumnValue
+    {
+        public string Text { get; set; }
+        public string Value { get; set; }
+        public string Color { get; set; }
     }
 }

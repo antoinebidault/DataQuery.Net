@@ -66,7 +66,7 @@ namespace DataQuery.Net
                 {
                     foreach (var prop in table.Columns)
                     {
-                        if (val == prop.Alias)
+                        if (val == prop.Name)
                         {
                             tablesToLink[table.Name] = table;
                             break;

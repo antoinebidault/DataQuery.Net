@@ -45,7 +45,7 @@ namespace DataQuery.Net
         public List<string> GetListOfDimension()
         {
             //Renvoie une liste concaténée de dim, filtres et métriques
-            return Metrics.Select(m => m.Alias).Union(Dimensions.Select(m => m.Alias)).Union(ForcedDateFilter.Select(m => m.Alias)).Union(Filters.Select(m => m.Dimension.Alias)).ToList();
+            return Metrics.Select(m => m.Name).Union(Dimensions.Select(m => m.Name)).Union(ForcedDateFilter.Select(m => m.Name)).Union(Filters.Select(m => m.Dimension.Name)).ToList();
         }
 
     }

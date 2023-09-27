@@ -9,24 +9,11 @@ namespace DataQuery.Net
     {
         public DataQuerySchemaExposed(DataQuerySchema schema)
         {
-            /*
-            this.Dimensions = schema.Dimensions
-                .Where(m=>m.Value.Displayed)
-                .Select(m => new DataQuerySchemaExposedColumn(m.Value));
-
-            this.Metrics = schema.Metrics
-                .Where(m => m.Value.Displayed)
-                .Select(m => new DataQuerySchemaExposedColumn(m.Value));
-            */
-
-
-            foreach (var table in schema.Tables)
+            foreach (var table in schema.Tables.Where(m => m.Value.Root && !m.Value.Implicit).Select(m=>m.Value))
             {
-                if (table.Value.IsRoot)
-                {
-                    var dataTable = GetTable(table.Value, new List<string>(), schema.Tables.Values);
-                    this.Tables.Add(dataTable);
-                }
+
+                var dataTable = GetTable(table, new List<string>(), schema.Tables.Values);
+                this.Tables.Add(dataTable);
             }
 
         }
@@ -37,17 +24,16 @@ namespace DataQuery.Net
             return new DataQuerySchemaExposedTable()
             {
                 Id = table.Name,
-                Root = table.IsRoot,
+                Root = table.Root,
                 Name = table.Name,
                 Children = table.GetConnectedTables(tables).Where(m => !tableToExcludeInChild.Contains(m.Name)).Select(m => GetTable(m, tableToExcludeInChild, tables)),
-                Dimensions = table.Columns.Where(m => !m.IsMetric && m.Displayed).Select(m => new DataQuerySchemaExposedColumn(m)),
-                Metrics = table.Columns.Where(m => m.IsMetric && m.Displayed).Select(m => new DataQuerySchemaExposedColumn(m))
+                Dimensions = table.Columns.Where(m => !m.IsMetric && m.Displayed).Select(m => new DataQuerySchemaExposedColumn(m, table)),
+                Metrics = table.Columns.Where(m => m.IsMetric && m.Displayed).Select(m => new DataQuerySchemaExposedColumn(m, table))
             };
 
         }
 
-        public IList<DataQuerySchemaExposedTable> Tables { get; set; }
-
+        public IList<DataQuerySchemaExposedTable> Tables { get; set; } = new List<DataQuerySchemaExposedTable>();
     }
 
     public class DataQuerySchemaExposedTable
@@ -63,9 +49,9 @@ namespace DataQuery.Net
 
     public class DataQuerySchemaExposedColumn
     {
-        public DataQuerySchemaExposedColumn(Column col)
+        public DataQuerySchemaExposedColumn(Column col, Table table)
         {
-            this.Id = col.Alias;
+            this.Id = table.Name + "." + col.Name;
             this.Label = col.DisplayName;
             this.Description = col.Description;
             this.Type = col.SqlType.ToString();

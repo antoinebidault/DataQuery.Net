@@ -70,16 +70,16 @@ namespace DataQuery.Net
             // DIMENSIONS
             foreach (Column champ in filters.Dimensions)
             {
-                _sqlSelect.Add(champ.ColumnName + " AS " + champ.Alias);
-                _sqlSelectCte.Add(champ.Alias);
+                _sqlSelect.Add(champ.ColumnName + " AS " + champ.Name);
+                _sqlSelectCte.Add(champ.Name);
                 _sqlGroupBy.Add(champ.ColumnName);
             }
 
             // Metrics handling
             foreach (Column champ in filters.Metrics)
             {
-                _sqlSelect.Add(champ.ColumnName + " AS " + champ.Alias);
-                _sqlSelectCte.Add(champ.Alias);
+                _sqlSelect.Add(champ.ColumnName + " AS " + champ.Name);
+                _sqlSelectCte.Add(champ.Name);
             }
 
             // Sorting
@@ -229,7 +229,7 @@ namespace DataQuery.Net
                                     //Ajout d'une colonne
                                     var column = new DataQueryColumn();
                                     var metric = _config.MetricsAndDimensions[reader.GetName(i)];
-                                    column.Name = metric.Alias;
+                                    column.Name = metric.Name;
                                     column.Label = metric.DisplayName;
                                     column.IsMetric = metric.IsMetric;
                                     column.Unite = metric.Unit;
@@ -330,10 +330,10 @@ namespace DataQuery.Net
                 {
                     where.Append(" ( ");
                     where.Append(filter.Key.ColumnName);
-                    where.Append($" IN (SELECT Item FROM @{ filter.Key.Alias}{i}) ");
+                    where.Append($" IN (SELECT Item FROM @{ filter.Key.Name}{i}) ");
                     where.Append(" ) ");
                     //  filter.Value
-                    AddParameter($"@{filter.Key.Alias}{i}", SqlDbType.Structured, filter.Value);
+                    AddParameter($"@{filter.Key.Name}{i}", SqlDbType.Structured, filter.Value);
                     where.Append(" AND ");
                 }
                 where.Append(" 1=1 ");
@@ -388,8 +388,8 @@ namespace DataQuery.Net
                             {
 
                                 where.Append(filter.Type.GetSqlLabel());
-                                where.Append(" @" + dim.Alias + i);
-                                AddParameter("@" + dim.Alias + i, dim.SqlType, filter.Value);
+                                where.Append(" @" + dim.Name + i);
+                                AddParameter("@" + dim.Name + i, dim.SqlTypeAuto, filter.Value);
                             }
 
                             if (filter.Type == OperatorType.Different && !string.IsNullOrEmpty(filter.Value))
@@ -435,7 +435,7 @@ namespace DataQuery.Net
                     throw new Exception("Full text query is not supported");
 
                 //Test if some requested dimensions are in fulltext index 
-                if (!fullTextQueryTable.Columns.Any(m => !m.IsMetric && filters.Dimensions.Select(s => s.Alias).Contains(m.Alias)))
+                if (!fullTextQueryTable.Columns.Any(m => !m.IsMetric && filters.Dimensions.Select(s => s.Name).Contains(m.Name)))
                     throw new Exception(string.Format("This dimension does not belong to {0} which contains the fulltext index", fullTextQueryTable.Name));
 
                 string fullTextSearchColumns = string.Format("{0}.*", fullTextQueryTable.Alias);
@@ -463,8 +463,8 @@ namespace DataQuery.Net
                     sqlQuery.Append(dim.ColumnName);
                     sqlQuery.Append(" ");
                     sqlQuery.Append(filter.Type.GetSqlLabel());
-                    sqlQuery.Append(" @" + dim.Alias + l);
-                    AddParameter("@" + dim.Alias + l, dim.SqlType, filter.Value);
+                    sqlQuery.Append(" @" + dim.Name + l);
+                    AddParameter("@" + dim.Name + l, dim.SqlTypeAuto, filter.Value);
                     if (nbFilterOnMetrics < (l + 1))
                     {
                         sqlQuery.Append(" ");
@@ -532,7 +532,7 @@ namespace DataQuery.Net
                 string sqlLines = " ( ";
                 foreach (var inclusion in group)
                 {
-                    string paramName = "@" + inclusion.KeyTable.Alias + i;
+                    string paramName = "@" + inclusion.KeyTable.Name + i;
                     string inOrOutStr = (inclusion.Type == TypeInclusion.Out ? "NOT IN" : "IN");
 
                     sqlLines += string.Format("{0} {1} (SELECT {2} FROM {3} {4} WHERE {5}={6} ) ",
@@ -548,7 +548,7 @@ namespace DataQuery.Net
                     if (inclusion != group.Last())
                         sqlLines += " OR ";
 
-                    AddParameter(paramName, inclusion.Prop.SqlType, inclusion.Value);
+                    AddParameter(paramName, inclusion.Prop.SqlTypeAuto, inclusion.Value);
                     i++;
                 };
                 sqlLines += " ) ";

@@ -16,8 +16,8 @@ namespace DataQuery.Net.Sample
             {
                 // L'alias correspond à l'instruction AS du "select from table AS {alias}"
                 Alias = "U",
-                DisplayName = "User",
-                IsRoot = true,
+                DisplayName = "Users",
+                Root = true,
                 // Les propriétés correspondent à l'ensemble des dimensions ou métriques contenus dans la table que vous souhaitez requêter (Inutile de mettre l'intégralité des colonnes, juste ce dont vous avez besoin)
                 Columns = new List<Column>
                 {

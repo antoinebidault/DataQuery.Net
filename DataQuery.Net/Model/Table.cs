@@ -24,7 +24,9 @@ namespace DataQuery.Net
         public List<Column> Columns { get; set; }
         public string DefaultFilterUsedIfTableUsed { get; set; }
         public DataBaseSize Size { get; set; }
-        public bool IsRoot { get; set; }
+        public bool Root { get; set; }
+        public bool Implicit { get; set; }
+        public bool NotDiscoverable { get; set; }
         public string DisplayName { get; set; }
 
 

@@ -158,10 +158,10 @@ namespace DataQuery.Net
                     if (config.Dimensions.ContainsKey(dim))
                     {
                         if (config.Dimensions[dim].IsGeography)
-                            throw new Exception(string.Format("Vous sélectionnez un type géography, ce qui n'est pas autorisé : {0} ! ", dim));
+                            throw new InvalidOperationException(string.Format("Vous sélectionnez un type géography, ce qui n'est pas autorisé : {0} ! ", dim));
 
                         if (!config.Dimensions[dim].AllowedToView)
-                            throw new Exception(string.Format("Vous n'avez pas les droits pour exporter cette dimension : {0} ! ", dim));
+                            throw new InvalidOperationException(string.Format("Vous n'avez pas les droits pour exporter cette dimension : {0} ! ", dim));
 
                         dqFilter.Dimensions.Add(config.Dimensions[dim]);
                     }
@@ -176,7 +176,7 @@ namespace DataQuery.Net
                     if (config.Dimensions.ContainsKey(keyValuePair.Key))
                     {
                         if (!config.Dimensions[keyValuePair.Key].AllowedToFilter)
-                            throw new Exception(string.Format("Vous n'avez pas les droits pour requêter en batch cette dimension : {0} ! ", keyValuePair.Key));
+                            throw new InvalidOperationException(string.Format("Vous n'avez pas les droits pour requêter en batch cette dimension : {0} ! ", keyValuePair.Key));
 
                         var dt = new DataTable();
                         dt.Columns.Add(new DataColumn("data", typeof(string)));
@@ -200,10 +200,10 @@ namespace DataQuery.Net
                         if (config.Dimensions.ContainsKey(dim))
                         {
                             if (config.Dimensions[dim].IsGeography)
-                                throw new Exception(string.Format("La contrainte de recherche suivante n'est pas autorisée : {0} ! ", dim));
+                                throw new InvalidOperationException(string.Format("La contrainte de recherche suivante n'est pas autorisée : {0} ! ", dim));
 
                             if (!config.Dimensions[dim].AllowedToFilter && !config.Dimensions[dim].AllowedToView)
-                                throw new Exception(string.Format("La contrainte de recherche suivante n'est pas autorisée à l'export, contactez l'admin : {0} ! ", dim));
+                                throw new InvalidOperationException(string.Format("La contrainte de recherche suivante n'est pas autorisée à l'export, contactez l'admin : {0} ! ", dim));
 
                             dqFilter.FullTextQueryConstraints.Add(config.Dimensions[dim]);
                         }
@@ -220,7 +220,7 @@ namespace DataQuery.Net
                     if (config.Dimensions.ContainsKey(dim))
                     {
                         if (!config.Dimensions[dim].AllowedToFilter && config.Dimensions[dim].SqlType != SqlDbType.DateTime && config.Dimensions[dim].SqlType != SqlDbType.Date)
-                            throw new Exception(string.Format("Le paramètre forcedDateFilter est incorrecte : {0} ! ", dim));
+                            throw new InvalidOperationException(string.Format("Le paramètre forcedDateFilter est incorrecte : {0} ! ", dim));
 
                         dqFilter.ForcedDateFilter.Add(config.Dimensions[dim]);
                     }
@@ -236,10 +236,10 @@ namespace DataQuery.Net
                     {
 
                         if (config.Metrics[met].IsGeography)
-                            throw new Exception(string.Format("Vous sélectionnez un type géography, ce qui n'est pas autorisé : {0} ! ", met));
+                            throw new InvalidOperationException(string.Format("Vous sélectionnez un type géography, ce qui n'est pas autorisé : {0} ! ", met));
 
                         if (!config.Metrics[met].AllowedToView)
-                            throw new Exception(string.Format("Vous n'avez pas les droits pour exporter cette métrique : {0} ! ", met));
+                            throw new InvalidOperationException(string.Format("Vous n'avez pas les droits pour exporter cette métrique : {0} ! ", met));
 
                         dqFilter.Metrics.Add(config.Metrics[met]);
                     }
@@ -280,7 +280,7 @@ namespace DataQuery.Net
                 }
                 else
                 {
-                    throw new Exception("La variable de tri doit faire partie des métriques ou des dimensions");
+                    throw new InvalidOperationException("La variable de tri doit faire partie des métriques ou des dimensions");
                 }
                 dqFilter.Sorts.Add(sortClean);
             }
@@ -294,7 +294,7 @@ namespace DataQuery.Net
 
                     foreach (Column dim in dqFilter.ForcedDateFilter)
                     {
-                        if (dim.Alias == prop.Alias)
+                        if (dim.Name == prop.Name)
                         {
                             dqFilter.Tables[table.Name] = table;
                         }
@@ -302,7 +302,7 @@ namespace DataQuery.Net
 
                     foreach (Column metric in dqFilter.Metrics)
                     {
-                        if (metric.Alias == prop.Alias)
+                        if (metric.Name == prop.Name)
                         {
                             dqFilter.Tables[table.Name] = table;
                         }
@@ -310,7 +310,7 @@ namespace DataQuery.Net
 
                     foreach (Column dim in dqFilter.Dimensions)
                     {
-                        if (dim.Alias == prop.Alias)
+                        if (dim.Name == prop.Name)
                         {
                             dqFilter.Tables[table.Name] = table;
                         }
@@ -318,13 +318,26 @@ namespace DataQuery.Net
 
                     foreach (Filter filter in dqFilter.Filters)
                     {
-                        if (filter.Dimension.Alias == prop.Alias)
+                        if (filter.Dimension.Name == prop.Name)
                         {
                             dqFilter.Tables[table.Name] = table;
                         }
                     }
                 }
             }
+
+
+            if (!dqFilter.Tables.Any(m => m.Value.Root))
+            {
+                throw new InvalidOperationException("You must at least query a root property that is connected");
+            }
+
+            if (!dqFilter.Tables.Values.IsConnected(config.Tables.Values))
+            {
+                throw new InvalidOperationException("Tables must be connected ");
+
+            }
+
             return dqFilter;
         }
     }

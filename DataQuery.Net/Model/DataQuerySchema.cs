@@ -68,7 +68,7 @@ namespace DataQuery.Net
                 {
                     foreach (var prop in table.Columns)
                     {
-                        dic[table.Name + "." + prop.Alias] = prop;
+                        dic[table.Name + "." + prop.Name] = prop;
                     }
                 }
                 return dic;
