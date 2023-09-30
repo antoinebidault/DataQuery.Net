@@ -54,13 +54,13 @@ namespace DataQuery.Net
         /// The prop name are case insensitive
         /// ex: Clics, Connexions
         /// </summary>
-        public string Metrics { get; set; }
+        public IEnumerable<string> Metrics { get; set; }
 
         /// <summary>
         /// Comma separated database columns alias
         /// e.g. Date,Campaign
         /// </summary>
-        public string Dimensions { get; set; }
+        public IEnumerable<string> Dimensions { get; set; }
 
         /// <summary>
         /// Filters on Google format (IdCookie==10310501,EventKey!=cat)
@@ -151,9 +151,9 @@ namespace DataQuery.Net
 
             // filterClean.PaginationDimension = config.Dimensions[this.paginationDimension];
             // Dimensions
-            if (!string.IsNullOrEmpty(Dimensions))
+            if (Dimensions != null && Dimensions.Any())
             {
-                foreach (string dim in Dimensions.Split(',').Select(m => m.Trim()))
+                foreach (string dim in Dimensions.Select(m => m.Trim()))
                 {
                     if (config.Dimensions.ContainsKey(dim))
                     {
@@ -228,9 +228,9 @@ namespace DataQuery.Net
             }
 
             //Métriques
-            if (!string.IsNullOrEmpty(Metrics))
+            if (Metrics != null && Metrics.Any())
             {
-                foreach (string met in Metrics.Split(',').Select(m => m.Trim()))
+                foreach (string met in Metrics.Select(m => m.Trim()))
                 {
                     if (config.Metrics.ContainsKey(met))
                     {
@@ -270,7 +270,7 @@ namespace DataQuery.Net
             if (!string.IsNullOrEmpty(this.Sort))
             {
                 Sort sortClean = new Sort { Prop = config.Metrics.Values.First(), Asc = this.Asc };
-                if (Dimensions != null && !string.IsNullOrEmpty(this.Dimensions) && Dimensions.Contains(this.Sort) && config.Dimensions.ContainsKey(this.Sort))
+                if (Dimensions != null && this.Dimensions.Any() && Dimensions.Contains(this.Sort) && config.Dimensions.ContainsKey(this.Sort))
                 {
                     sortClean.Prop = config.Dimensions[this.Sort];
                 }
