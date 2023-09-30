@@ -161,9 +161,8 @@ namespace DataQuery.Net
                 return null;
 
             //Première table
-            output += $"[{paths.First().From.Name}] AS {paths.First().From.Alias}  ";
+            output += $"[{paths.First().From.SqlName}] AS {paths.First().From.Alias}  ";
             tablesIncluded.Remove(paths.First().From.Name);
-
 
             //Compilation du chemin
             while (tablesIncluded.Values.Count > 0)
@@ -187,7 +186,7 @@ namespace DataQuery.Net
                         {
                             output += " INNER JOIN ";
                         }
-                        output += "[" + join.To.Name + "] AS " + join.To.Alias + " ";
+                        output += "[" + join.To.SqlName + "] AS " + join.To.Alias + " ";
                         output += " ON ";
                         output += GetOnStatement(join);
                         break;
