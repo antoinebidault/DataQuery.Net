@@ -28,6 +28,8 @@ namespace DataQuery.Net
         }
         
         public Dictionary<string, Table> Tables { get; }
+
+
         public Dictionary<string, Column> Metrics
         {
             get
