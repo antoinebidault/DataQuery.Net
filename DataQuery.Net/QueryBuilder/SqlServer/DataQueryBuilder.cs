@@ -70,16 +70,16 @@ namespace DataQuery.Net
             // DIMENSIONS
             foreach (Column champ in filters.Dimensions)
             {
-                _sqlSelect.Add(champ.ColumnName + " AS " + champ.Name);
-                _sqlSelectCte.Add(champ.Name);
-                _sqlGroupBy.Add(champ.ColumnName);
+                _sqlSelect.Add(champ.SqlName + " AS " + champ.Alias);
+                _sqlSelectCte.Add(champ.Alias);
+                _sqlGroupBy.Add(champ.SqlName);
             }
 
             // Metrics handling
             foreach (Column champ in filters.Metrics)
             {
-                _sqlSelect.Add(champ.ColumnName + " AS " + champ.Name);
-                _sqlSelectCte.Add(champ.Name);
+                _sqlSelect.Add(champ.SqlName + " AS " + champ.Alias);
+                _sqlSelectCte.Add(champ.Alias);
             }
 
             // Sorting
@@ -87,7 +87,7 @@ namespace DataQuery.Net
             {
                 foreach (Sort sort in filters.Sorts)
                 {
-                    _sqlOrderBy.Add(sort.Prop.ColumnName + " " + (sort.Asc ? "ASC" : "DESC"));
+                    _sqlOrderBy.Add(sort.Prop.SqlName + " " + (sort.Asc ? "ASC" : "DESC"));
                 }
             }
             else if (filters.Random)
@@ -229,7 +229,7 @@ namespace DataQuery.Net
                                     //Ajout d'une colonne
                                     var column = new DataQueryColumn();
                                     var metric = _config.MetricsAndDimensions[reader.GetName(i)];
-                                    column.Name = metric.Name;
+                                    column.Name = metric.Alias;
                                     column.Label = metric.DisplayName;
                                     column.IsMetric = metric.IsMetric;
                                     column.Unite = metric.Unit;
@@ -329,11 +329,11 @@ namespace DataQuery.Net
                 foreach (var filter in filters)
                 {
                     where.Append(" ( ");
-                    where.Append(filter.Key.ColumnName);
-                    where.Append($" IN (SELECT Item FROM @{ filter.Key.Name}{i}) ");
+                    where.Append(filter.Key.SqlName);
+                    where.Append($" IN (SELECT Item FROM @{ filter.Key.Alias}{i}) ");
                     where.Append(" ) ");
                     //  filter.Value
-                    AddParameter($"@{filter.Key.Name}{i}", SqlDbType.Structured, filter.Value);
+                    AddParameter($"@{filter.Key.Alias}{i}", SqlDbType.Structured, filter.Value);
                     where.Append(" AND ");
                 }
                 where.Append(" 1=1 ");
@@ -368,13 +368,13 @@ namespace DataQuery.Net
                             if (filter.Type == OperatorType.Different && !string.IsNullOrEmpty(filter.Value))
                             {
                                 where.Append(" ( ");
-                                where.Append(dim.ColumnName);
+                                where.Append(dim.SqlName);
                                 where.Append(" IS NULL OR ");
                             }
 
 
                             where.Append(" ");
-                            where.Append(dim.ColumnName);
+                            where.Append(dim.SqlName);
                             where.Append(" ");
                             if (filter.Type == OperatorType.Equal && string.IsNullOrEmpty(filter.Value))
                             {
@@ -388,8 +388,8 @@ namespace DataQuery.Net
                             {
 
                                 where.Append(filter.Type.GetSqlLabel());
-                                where.Append(" @" + dim.Name + i);
-                                AddParameter("@" + dim.Name + i, dim.SqlTypeAuto, filter.Value);
+                                where.Append(" @" + dim.Alias + i);
+                                AddParameter("@" + dim.Alias + i, dim.SqlTypeAuto, filter.Value);
                             }
 
                             if (filter.Type == OperatorType.Different && !string.IsNullOrEmpty(filter.Value))
@@ -435,13 +435,13 @@ namespace DataQuery.Net
                     throw new Exception("Full text query is not supported");
 
                 //Test if some requested dimensions are in fulltext index 
-                if (!fullTextQueryTable.Columns.Any(m => !m.IsMetric && filters.Dimensions.Select(s => s.Name).Contains(m.Name)))
+                if (!fullTextQueryTable.Columns.Any(m => !m.IsMetric && filters.Dimensions.Select(s => s.Alias).Contains(m.Alias)))
                     throw new Exception(string.Format("This dimension does not belong to {0} which contains the fulltext index", fullTextQueryTable.Name));
 
                 string fullTextSearchColumns = string.Format("{0}.*", fullTextQueryTable.Alias);
 
                 if (filters.FullTextQueryConstraints.Any())
-                    fullTextSearchColumns = string.Join(",", filters.FullTextQueryConstraints.Select(m => m.ColumnName));
+                    fullTextSearchColumns = string.Join(",", filters.FullTextQueryConstraints.Select(m => m.SqlName));
 
                 AppendWhere(string.Format("CONTAINS({0},@fullTextSearch)", fullTextSearchColumns));
                 AddParameter("@fullTextSearch", SqlDbType.NVarChar, FormatFullTextQuery(filters.FullTextQuery));
@@ -460,11 +460,11 @@ namespace DataQuery.Net
                 {
                     var dim = filter.Dimension;
                     sqlQuery.Append(" ");
-                    sqlQuery.Append(dim.ColumnName);
+                    sqlQuery.Append(dim.SqlName);
                     sqlQuery.Append(" ");
                     sqlQuery.Append(filter.Type.GetSqlLabel());
-                    sqlQuery.Append(" @" + dim.Name + l);
-                    AddParameter("@" + dim.Name + l, dim.SqlTypeAuto, filter.Value);
+                    sqlQuery.Append(" @" + dim.Alias + l);
+                    AddParameter("@" + dim.Alias + l, dim.SqlTypeAuto, filter.Value);
                     if (nbFilterOnMetrics < (l + 1))
                     {
                         sqlQuery.Append(" ");
@@ -532,16 +532,16 @@ namespace DataQuery.Net
                 string sqlLines = " ( ";
                 foreach (var inclusion in group)
                 {
-                    string paramName = "@" + inclusion.KeyTable.Name + i;
+                    string paramName = "@" + inclusion.KeyTable.Alias + i;
                     string inOrOutStr = (inclusion.Type == TypeInclusion.Out ? "NOT IN" : "IN");
 
                     sqlLines += string.Format("{0} {1} (SELECT {2} FROM {3} {4} WHERE {5}={6} ) ",
                       inclusion.LinkedPropertyColumnName,
                       inOrOutStr,
-                      inclusion.KeyTable.ColumnName,
+                      inclusion.KeyTable.SqlName,
                       inclusion.Table.Name,
                       inclusion.Table.Alias,
-                      inclusion.Prop.ColumnName,
+                      inclusion.Prop.SqlName,
                       paramName
                     );
 
@@ -576,7 +576,7 @@ namespace DataQuery.Net
             var arrVal = filter.Value.Split('|');
 
             if (arrVal.Count() != 2)
-                throw new Exception("Error on dimension " + filter.Dimension.ColumnName + ", the format must be {latInDeg} {lngInDeg}|{distanceInMeter}. Ex : 2.065638 49.465552|6000");
+                throw new Exception("Error on dimension " + filter.Dimension.SqlName + ", the format must be {latInDeg} {lngInDeg}|{distanceInMeter}. Ex : 2.065638 49.465552|6000");
 
             try
             {
@@ -585,13 +585,13 @@ namespace DataQuery.Net
                 double lng = double.Parse(latLng[1]);
                 double distance = double.Parse(arrVal[1]);
                 param = $"geography::STGeomFromText('POINT({lat} {lng})', 4326)";
-                output += (string.Format("{0}.STDistance({1}) IS NOT NULL", filter.Dimension.ColumnName, param));
+                output += (string.Format("{0}.STDistance({1}) IS NOT NULL", filter.Dimension.SqlName, param));
                 output += " AND ";
-                output += (string.Format("{0}.STDistance({1}) < {2} ", filter.Dimension.ColumnName, param, distance));
+                output += (string.Format("{0}.STDistance({1}) < {2} ", filter.Dimension.SqlName, param, distance));
             }
             catch
             {
-                throw new Exception("Erreur sur la dimension " + filter.Dimension.ColumnName + ", le format doit être {latInDeg} {lngInDeg}|{distanceInMeter}. Ex : 2.065638 49.465552|6000");
+                throw new Exception("Erreur sur la dimension " + filter.Dimension.SqlName + ", le format doit être {latInDeg} {lngInDeg}|{distanceInMeter}. Ex : 2.065638 49.465552|6000");
             }
 
             output += " ) ";

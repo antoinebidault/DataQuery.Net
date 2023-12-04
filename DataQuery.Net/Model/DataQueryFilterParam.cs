@@ -294,7 +294,7 @@ namespace DataQuery.Net
 
                     foreach (Column dim in dqFilter.ForcedDateFilter)
                     {
-                        if (dim.Name == prop.Name)
+                        if (dim.Alias == prop.Alias)
                         {
                             dqFilter.Tables[table.Name] = table;
                         }
@@ -302,7 +302,7 @@ namespace DataQuery.Net
 
                     foreach (Column metric in dqFilter.Metrics)
                     {
-                        if (metric.Name == prop.Name)
+                        if (metric.Alias == prop.Alias)
                         {
                             dqFilter.Tables[table.Name] = table;
                         }
@@ -310,7 +310,7 @@ namespace DataQuery.Net
 
                     foreach (Column dim in dqFilter.Dimensions)
                     {
-                        if (dim.Name == prop.Name)
+                        if (dim.Alias == prop.Alias)
                         {
                             dqFilter.Tables[table.Name] = table;
                         }
@@ -318,7 +318,7 @@ namespace DataQuery.Net
 
                     foreach (Filter filter in dqFilter.Filters)
                     {
-                        if (filter.Dimension.Name == prop.Name)
+                        if (filter.Dimension.Alias == prop.Alias)
                         {
                             dqFilter.Tables[table.Name] = table;
                         }

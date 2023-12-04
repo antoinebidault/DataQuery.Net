@@ -9,7 +9,7 @@ namespace DataQuery.Net
     {
         public DataQuerySchemaExposed(DataQuerySchema schema)
         {
-            foreach (var table in schema.Tables.Where(m => m.Value.Root && !m.Value.Implicit).Select(m=>m.Value))
+            foreach (var table in schema.Tables.Where(m => !m.Value.Implicit).Select(m=>m.Value))
             {
                 var dataTable = GetTable(table, new List<string>(), schema.Tables.Values);
                 this.Tables.Add(dataTable);
@@ -19,13 +19,13 @@ namespace DataQuery.Net
 
         private DataQuerySchemaExposedTable GetTable(Table table, IList<string> tableToExcludeInChild, IEnumerable<Table> tables)
         {
-            tableToExcludeInChild.Add(table.Name);
+            tableToExcludeInChild.Add(table.Alias);
             return new DataQuerySchemaExposedTable()
             {
-                Id = table.Name,
+                Id = table.Alias,
                 Name = table.DisplayName,
                 Root = table.Root,
-                Children = table.GetConnectedTables(tables).Where(m => !tableToExcludeInChild.Contains(m.Name)).Select(m=>m.Name),
+                Children = table.GetConnectedTables(tables).Where(m => !tableToExcludeInChild.Contains(m.Alias)).Select(m=>m.Alias),
                 Dimensions = table.Columns.Where(m => !m.IsMetric && m.Displayed).Select(m => new DataQuerySchemaExposedColumn(m, table)),
                 Metrics = table.Columns.Where(m => m.IsMetric && m.Displayed).Select(m => new DataQuerySchemaExposedColumn(m, table))
             };

@@ -66,7 +66,7 @@ namespace DataQuery.Net
                 {
                     foreach (var prop in table.Columns)
                     {
-                        if (val == prop.Name)
+                        if (val == prop.Alias)
                         {
                             tablesToLink[table.Name] = table;
                             break;
@@ -206,7 +206,7 @@ namespace DataQuery.Net
             if (joining.To != null && joining.From != null)
             {
                 Column prop = joining.From.Columns.FirstOrDefault(m => m.SqlJoins != null && m.SqlJoins.ContainsKey(joining.To.Name));
-                output += prop.ColumnName + "=" + joining.To.Alias + "." + prop.SqlJoins[joining.To.Name];
+                output += prop.SqlName + "=" + joining.To.Alias + "." + prop.SqlJoins[joining.To.Name];
             }
             return output;
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataQuery.Net.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -87,14 +88,37 @@ namespace DataQuery.Net
         }
 
 
+        public static void AddColumn(this Table table, Column column)
+        {
+            table.Columns.Add(column);
+        }
+
+
         public static void OneToManyJoin(this Table from, Table to, string columnTo = null, string columnFrom = "Id")
         {
             if (columnTo == null)
             {
                 columnTo = from.Name + "Id";
             }
-            from.Columns.FirstOrDefault(m => m.Name.Equals(columnFrom, StringComparison.InvariantCultureIgnoreCase)).SqlJoins.Add(to.Name, columnTo);
-            to.Columns.FirstOrDefault(m => m.Name.Equals(columnTo, StringComparison.InvariantCultureIgnoreCase)).SqlJoins.Add(to.Name, columnFrom);
+
+            var fromColumn = from.Columns.FirstOrDefault(m => m.Alias.Equals(from.Alias + "_" + columnFrom, StringComparison.InvariantCultureIgnoreCase));
+
+            if (fromColumn == null)
+            {
+                throw new DataQueryJoinException($"OneToManyJoin Error : from column : {columnFrom} not found in {from.Name}");
+            }
+
+            fromColumn.SqlJoins.Add(to.Name, columnTo);
+
+
+            var toColumn = to.Columns.FirstOrDefault(m => m.Alias.Equals(to.Alias + "_" + columnTo, StringComparison.InvariantCultureIgnoreCase));
+
+            if (toColumn == null)
+            {
+                throw new DataQueryJoinException($"OneToManyJoin Error :Invalid to column : {columnTo} not found in {to.Name}");
+            }
+
+            toColumn.SqlJoins.Add(from.Name, columnFrom);
         }
 
         /*

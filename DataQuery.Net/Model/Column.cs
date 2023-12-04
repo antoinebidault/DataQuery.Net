@@ -23,11 +23,16 @@ namespace DataQuery.Net
             MetaDatas = new Dictionary<string, object>();
         }
 
+        [Obsolete]
         /// <summary>
-        /// SQL column name, e.g. USER.Name, SUM(USER.NbConnexions)
+        /// Please use "SqlName" instead
         /// </summary>
         public string ColumnName { get; set; }
 
+        /// <summary>
+        /// SQL column name, e.g. USER.Name, SUM(USER.NbConnexions)
+        /// </summary>
+        public string SqlName { get; set; }
 
         /// <summary>
         /// A simple metadata dictionnary
@@ -60,7 +65,7 @@ namespace DataQuery.Net
         /// <summary>
         /// SQL Alias used to call this prop in the front channel (using the dataqueryfilterparams)
         /// </summary>
-        public string Name { get; set; }
+        public string Alias { get; set; }
 
         /// <summary>
         /// User friendly label
@@ -120,7 +125,7 @@ namespace DataQuery.Net
         /// <summary>
         /// Sql joins
         /// </summary>
-        public Dictionary<string, string> SqlJoins { get; set; } 
+        public Dictionary<string, string> SqlJoins { get; set; }
         public IEnumerable<ColumnValue> Values { get; set; }
     }
 

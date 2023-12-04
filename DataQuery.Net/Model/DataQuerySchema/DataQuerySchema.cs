@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DataQuery.Net.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,14 @@ namespace DataQuery.Net
 
         public void AddTable(Table table)
         {
+            // Check if table has not been already added
+            if (this.Tables.ContainsKey(table.Name))
+            {
+                throw new DataQueryInvalidConfigException($"Table ALIAS conflict : There is already a table with this alias : {table.Name}. " +
+                                                        $"You try to insert the '{table.DisplayName}' table, " +
+                                                        $"conflicted table : '{Tables[table.Name].DisplayName}'");
+            }
+
             this.Tables.Add(table.Name, table);
         }
 
@@ -26,7 +35,7 @@ namespace DataQuery.Net
         {
             this.Tables.Remove(tableName);
         }
-        
+
         public Dictionary<string, Table> Tables { get; }
 
 
@@ -70,7 +79,7 @@ namespace DataQuery.Net
                 {
                     foreach (var prop in table.Columns)
                     {
-                        dic[table.Name + "." + prop.Name] = prop;
+                        dic[table.Name + "." + prop.Alias] = prop;
                     }
                 }
                 return dic;

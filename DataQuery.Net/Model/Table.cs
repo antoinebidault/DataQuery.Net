@@ -31,7 +31,6 @@ namespace DataQuery.Net
         public bool NotDiscoverable { get; set; }
         public string DisplayName { get; set; }
 
-
     }
 
     public enum DataBaseSize
