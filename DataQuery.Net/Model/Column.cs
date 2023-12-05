@@ -12,8 +12,9 @@ namespace DataQuery.Net
     /// </summary>
     public class Column
     {
-        public Column()
+        public Column(string tableAlias)
         {
+            this.TableAlias = tableAlias;
             this.SqlType = SqlDbType.NVarChar;
             this.Displayed = true;
             this.SqlJoins = new Dictionary<string, string>();
@@ -33,11 +34,22 @@ namespace DataQuery.Net
         /// SQL column name, e.g. USER.Name, SUM(USER.NbConnexions)
         /// </summary>
         public string SqlName { get; set; }
+        internal string SqlNameComputed
+        {
+            get
+             {
+                var sqlName = SqlName.Replace("<table>", this.TableAlias);
+                if (!sqlName.Contains(this.TableAlias + "."))
+                    return this.TableAlias + "." + sqlName;
+                return sqlName;
+            }
+        }
 
         /// <summary>
         /// A simple metadata dictionnary
         /// </summary>
         public IDictionary<string, object> MetaDatas { get; set; }
+        public string TableAlias { get; }
 
         /// <summary>
         /// SQL Type overiden (use the native type if you don't care)
@@ -62,10 +74,8 @@ namespace DataQuery.Net
             }
         }
 
-        /// <summary>
-        /// SQL Alias used to call this prop in the front channel (using the dataqueryfilterparams)
-        /// </summary>
-        public string Alias { get; set; }
+        public string Name { get; set; }
+        public string Alias { get { return $"{this.TableAlias}_{this.Name}"; } }
 
         /// <summary>
         /// User friendly label

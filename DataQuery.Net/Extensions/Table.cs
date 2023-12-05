@@ -20,7 +20,7 @@ namespace DataQuery.Net
                 return true;
             }
 
-            var tableNames = tables.Select(m => m.Name).ToList();
+            var tableNames = tables.Select(m => m.Alias).ToList();
 
             var currentTable = tables.First();
             HashSet<string> tableProcessed = new HashSet<string>();
@@ -35,15 +35,15 @@ namespace DataQuery.Net
 
             foreach (var childTable in currentTable.GetConnectedTables(tablesConfigured))
             {
-                if (tableNames.Contains(childTable.Name))
+                if (tableNames.Contains(childTable.Alias))
                 {
-                    tableNames.Remove(childTable.Name);
+                    tableNames.Remove(childTable.Alias);
                 }
 
 
-                if (!tableProcessed.Contains(childTable.Name))
+                if (!tableProcessed.Contains(childTable.Alias))
                 {
-                    tableProcessed.Add(childTable.Name);
+                    tableProcessed.Add(childTable.Alias);
                     IsConnectedRecursive(childTable, tableNames, tablesConfigured, tableProcessed);
                 }
             }
@@ -65,7 +65,7 @@ namespace DataQuery.Net
                 {
                     foreach (var sql in col.SqlJoins)
                     {
-                        var found = tables.FirstOrDefault(m => m.Name == sql.Key);
+                        var found = tables.FirstOrDefault(m => m.Alias == sql.Key);
 
                         if (found != null)
                         {
@@ -98,27 +98,27 @@ namespace DataQuery.Net
         {
             if (columnTo == null)
             {
-                columnTo = from.Name + "Id";
+                columnTo = from.Alias + "Id";
             }
 
             var fromColumn = from.Columns.FirstOrDefault(m => m.Alias.Equals(from.Alias + "_" + columnFrom, StringComparison.InvariantCultureIgnoreCase));
 
             if (fromColumn == null)
             {
-                throw new DataQueryJoinException($"OneToManyJoin Error : from column : {columnFrom} not found in {from.Name}");
+                throw new DataQueryJoinException($"OneToManyJoin Error : from column : {columnFrom} not found in {from.Alias}");
             }
 
-            fromColumn.SqlJoins.Add(to.Name, columnTo);
+            fromColumn.SqlJoins.Add(to.Alias, columnTo);
 
 
             var toColumn = to.Columns.FirstOrDefault(m => m.Alias.Equals(to.Alias + "_" + columnTo, StringComparison.InvariantCultureIgnoreCase));
 
             if (toColumn == null)
             {
-                throw new DataQueryJoinException($"OneToManyJoin Error :Invalid to column : {columnTo} not found in {to.Name}");
+                throw new DataQueryJoinException($"OneToManyJoin Error :Invalid to column : {columnTo} not found in {to.Alias}");
             }
 
-            toColumn.SqlJoins.Add(from.Name, columnFrom);
+            toColumn.SqlJoins.Add(from.Alias, columnFrom);
         }
 
         /*

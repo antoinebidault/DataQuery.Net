@@ -6,7 +6,7 @@ namespace DataQuery.Net
     {
         public DataQuerySchemaExposedColumn(Column col, Table table)
         {
-            this.Id = table.Name + "." + col.Alias;
+            this.Id =col.Alias;
             this.DisplayName = col.DisplayName;
             this.Description = col.Description;
             this.Type = col.SqlType.ToString();

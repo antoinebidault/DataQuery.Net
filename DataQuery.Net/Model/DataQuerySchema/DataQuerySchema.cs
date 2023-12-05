@@ -21,14 +21,14 @@ namespace DataQuery.Net
         public void AddTable(Table table)
         {
             // Check if table has not been already added
-            if (this.Tables.ContainsKey(table.Name))
+            if (this.Tables.ContainsKey(table.Alias))
             {
-                throw new DataQueryInvalidConfigException($"Table ALIAS conflict : There is already a table with this alias : {table.Name}. " +
+                throw new DataQueryInvalidConfigException($"Table ALIAS conflict : There is already a table with this alias : {table.Alias}. " +
                                                         $"You try to insert the '{table.DisplayName}' table, " +
-                                                        $"conflicted table : '{Tables[table.Name].DisplayName}'");
+                                                        $"conflicted table : '{Tables[table.Alias].DisplayName}'");
             }
 
-            this.Tables.Add(table.Name, table);
+            this.Tables.Add(table.Alias, table);
         }
 
         public void RemoveTable(string tableName)
@@ -79,7 +79,7 @@ namespace DataQuery.Net
                 {
                     foreach (var prop in table.Columns)
                     {
-                        dic[table.Name + "." + prop.Alias] = prop;
+                        dic[prop.Alias] = prop;
                     }
                 }
                 return dic;

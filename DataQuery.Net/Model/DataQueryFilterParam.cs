@@ -296,7 +296,7 @@ namespace DataQuery.Net
                     {
                         if (dim.Alias == prop.Alias)
                         {
-                            dqFilter.Tables[table.Name] = table;
+                            dqFilter.Tables[table.Alias] = table;
                         }
                     }
 
@@ -304,7 +304,7 @@ namespace DataQuery.Net
                     {
                         if (metric.Alias == prop.Alias)
                         {
-                            dqFilter.Tables[table.Name] = table;
+                            dqFilter.Tables[table.Alias] = table;
                         }
                     }
 
@@ -312,7 +312,7 @@ namespace DataQuery.Net
                     {
                         if (dim.Alias == prop.Alias)
                         {
-                            dqFilter.Tables[table.Name] = table;
+                            dqFilter.Tables[table.Alias] = table;
                         }
                     }
 
@@ -320,7 +320,7 @@ namespace DataQuery.Net
                     {
                         if (filter.Dimension.Alias == prop.Alias)
                         {
-                            dqFilter.Tables[table.Name] = table;
+                            dqFilter.Tables[table.Alias] = table;
                         }
                     }
                 }

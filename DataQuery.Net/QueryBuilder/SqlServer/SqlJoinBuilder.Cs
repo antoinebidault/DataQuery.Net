@@ -68,7 +68,7 @@ namespace DataQuery.Net
                     {
                         if (val == prop.Alias)
                         {
-                            tablesToLink[table.Name] = table;
+                            tablesToLink[table.Alias] = table;
                             break;
                         }
                     }
@@ -80,7 +80,7 @@ namespace DataQuery.Net
 
             if (tablesToLink.Count == 1)
             {
-                tablesIncluded[tablesToLink.Values.First().Name] = tablesToLink.Values.First();
+                tablesIncluded[tablesToLink.Values.First().Alias] = tablesToLink.Values.First();
                 joins = new List<TableJoining>
         {
           new TableJoining {  From = tablesToLink.Values.First() }
@@ -109,7 +109,7 @@ namespace DataQuery.Net
                             {
                                 var to = tmpList.ElementAtOrDefault(j + 1);
                                 joins.Add(new TableJoining() { From = elt, To = to ?? null, Number = j });
-                                tablesIncluded[elt.Name] = elt;
+                                tablesIncluded[elt.Alias] = elt;
                                 j++;
                             }
                         }
@@ -162,21 +162,21 @@ namespace DataQuery.Net
 
             //Première table
             output += $"[{paths.First().From.SqlName}] AS {paths.First().From.Alias}  ";
-            tablesIncluded.Remove(paths.First().From.Name);
+            tablesIncluded.Remove(paths.First().From.Alias);
 
             //Compilation du chemin
             while (tablesIncluded.Values.Count > 0)
             {
                 foreach (var join in paths)
                 {
-                    if (tablesIncluded.ContainsKey(join.From.Name))
-                        tablesIncluded.Remove(join.From.Name);
+                    if (tablesIncluded.ContainsKey(join.From.Alias))
+                        tablesIncluded.Remove(join.From.Alias);
 
                     visited.Add(join.From);
 
-                    if (join.To != null && tablesIncluded.ContainsKey(join.To.Name))
+                    if (join.To != null && tablesIncluded.ContainsKey(join.To.Alias))
                     {
-                        tablesIncluded.Remove(join.To.Name);
+                        tablesIncluded.Remove(join.To.Alias);
                         visited.Add(join.To);
                         if (join.To.TypeJoin == TypeJoin.LEFTOUTER || join.From.TypeJoin == TypeJoin.LEFTOUTER)
                         {
@@ -205,8 +205,8 @@ namespace DataQuery.Net
             string output = "";
             if (joining.To != null && joining.From != null)
             {
-                Column prop = joining.From.Columns.FirstOrDefault(m => m.SqlJoins != null && m.SqlJoins.ContainsKey(joining.To.Name));
-                output += prop.SqlName + "=" + joining.To.Alias + "." + prop.SqlJoins[joining.To.Name];
+                Column prop = joining.From.Columns.FirstOrDefault(m => m.SqlJoins != null && m.SqlJoins.ContainsKey(joining.To.Alias));
+                output += joining.From.Alias + "." + prop.SqlName + "=" + joining.To.Alias + "." + prop.SqlJoins[joining.To.Alias];
             }
             return output;
         }

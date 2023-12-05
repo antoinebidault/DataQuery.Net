@@ -8,21 +8,20 @@ namespace DataQuery.Net
 {
     public class Table
     {
-        public Table(string tableName, string sqlName = null)
+        public Table(string alias, string sqlName = null)
         {
-            this.DisplayName = tableName;
-            this.Name = tableName;
-            this.SqlName = sqlName ?? tableName;
+            this.DisplayName = alias;
+            this.Alias = alias;
+            this.SqlName = sqlName ?? alias;
             Columns = new List<Column>();
             TypeJoin = TypeJoin.INNER;
             Size = DataBaseSize.Standard;
         }
         public bool SupportFreeText { get; set; }
-        public string Name { get; }
+        public string Alias { get; set; }
         public string SqlName { get; }
         public int Order { get; set; }
         public TypeJoin TypeJoin { get; set; }
-        public string Alias { get; set; }
         public List<Column> Columns { get; set; }
         public string DefaultFilterUsedIfTableUsed { get; set; }
         public DataBaseSize Size { get; set; }
