@@ -19,7 +19,7 @@ namespace DataQuery.Net
         }
 
         public string SqlQuery { get; set; }
-        public double QueryDelay { get; set; }
+        public double Delay { get; set; }
         public DataQueryFilterParams Filter { get; set; }
         public DataQueryTable Data { get; set; }
 
@@ -47,7 +47,7 @@ namespace DataQuery.Net
     {
         public DataQueryTable()
         {
-            this.Columns = new List<DataQueryColumn>();
+            this.Columns = new List<DataQuerySchemaExposedColumn>();
             this.Rows = new List<object[]>();
         }
 
@@ -65,9 +65,10 @@ namespace DataQuery.Net
         }
         public int Count { get; set; }
         public int TotalRows { get; set; }
-        public List<DataQueryColumn> Columns { get; set; }
+        public List<DataQuerySchemaExposedColumn> Columns { get; set; }
         public List<object[]> Rows { get; set; }
 
+        
         /// <summary>
         /// Convert to a standard datatable
         /// </summary>
@@ -79,9 +80,9 @@ namespace DataQuery.Net
                 TableName = "Data query result"
             };
 
-            foreach (DataQueryColumn col in Columns)
+            foreach (var col in Columns)
             {
-                dt.Columns.Add(new DataColumn() { ColumnName = col.Name, Caption = col.Label });
+                dt.Columns.Add(new DataColumn(col.DisplayName, col.PropertyType) );
             }
 
             foreach (object[] row in Rows)
@@ -91,82 +92,7 @@ namespace DataQuery.Net
 
             return dt;
         }
-
-        /*
-        /// <summary>
-        /// Convert to a csv file (on disk file
-        /// </summary>
-        /// <param name="tempFilePath">L'emplacement physique du fichier temporaire :  c:\temp\test.csv</param>
-        /// <param name="separator">Le séparateur</param>
-        /// <param name="nullValue">La valeur si null</param>
-        public void ToFileCSV(string tempFilePath, string separator = ";", string nullValue = "")
-        {
-            string line = "";
-            using (var writer = new StreamWriter(tempFilePath, false, Encoding.Default))
-            {
-                line = string.Empty;
-
-                //Entêtes de colonnes
-                for (int i = 0; i < this.Columns.Count; i++)
-                {
-                    line += "\"";
-                    line += this.Columns[i].Label.Replace("\"", "\"\"");
-                    line += "\"";
-                    line += (i == this.Columns.Count - 1 ? "\r\n" : separator);
-                }
-                writer.Write(line);
-
-                string val = "";
-
-                //Ecriture des lignes
-                foreach (object[] row in this.Rows)
-                {
-                    line = string.Empty;
-
-                    //Ecriture des cellules
-                    for (int i = 0; i < this.Columns.Count; i++)
-                    {
-                        val = row[i].ToString();
-                        line += "\"";
-                        {
-                            if (!string.IsNullOrEmpty(val))
-                                line += (string.IsNullOrEmpty(val) ? nullValue : val.Replace("\"", "\"\""));
-                        }
-                        line += "\"";
-                        line += (i == this.Columns.Count - 1 ? "\r\n" : separator);
-                    }
-                    writer.Write(line);
-                }
-            }
-
-        }
-
-        public string ToCsv(string separator = ";", string nullValue = "")
-        {
-            var result = new StringBuilder();
-            for (int i = 0; i < this.Columns.Count; i++)
-            {
-                result.Append("\"");
-                result.Append(this.Columns[i].Label.Replace("\"", "\"\""));
-                result.Append("\"");
-                result.Append(i == this.Columns.Count - 1 ? "\r\n" : separator);
-            }
-
-            foreach (var row in this.Rows)
-            {
-                for (int i = 0; i < Columns.Count; i++)
-                {
-                    var val = row[i].ToString();
-                    result.Append("\"");
-                    result.Append((string.IsNullOrEmpty(val) ? nullValue : val).Replace("\"", "\"\""));
-                    result.Append("\"");
-                    result.Append(i == Columns.Count - 1 ? "\r\n" : separator);
-                }
-            }
-
-            return result.ToString();
-
-        }*/
+        
 
         public void Dispose()
         {

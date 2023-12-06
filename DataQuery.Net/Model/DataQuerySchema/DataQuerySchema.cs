@@ -18,6 +18,8 @@ namespace DataQuery.Net
             Tables = new Dictionary<string, Table>(StringComparer.InvariantCultureIgnoreCase);
         }
 
+        public Func<object, DataQuerySchemaExposedColumn, object> FormatRowCell { get; set; }
+
         public void AddTable(Table table)
         {
             // Check if table has not been already added

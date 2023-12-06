@@ -26,8 +26,8 @@ namespace DataQuery.Net
                 Name = table.DisplayName,
                 Root = table.Root,
                 Children = table.GetConnectedTables(tables).Where(m => !tableToExcludeInChild.Contains(m.Alias)).Select(m=>m.Alias),
-                Dimensions = table.Columns.Where(m => !m.IsMetric && m.Displayed).Select(m => new DataQuerySchemaExposedColumn(m, table)),
-                Metrics = table.Columns.Where(m => m.IsMetric && m.Displayed).Select(m => new DataQuerySchemaExposedColumn(m, table))
+                Dimensions = table.Columns.Where(m => !m.IsMetric && m.Displayed).Select(m => new DataQuerySchemaExposedColumn(m)),
+                Metrics = table.Columns.Where(m => m.IsMetric && m.Displayed).Select(m => new DataQuerySchemaExposedColumn(m))
             };
         }
 

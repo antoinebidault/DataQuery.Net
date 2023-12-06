@@ -50,6 +50,11 @@ namespace DataQuery.Net
         public bool Asc { get; set; } = false;
 
         /// <summary>
+        /// False by default, set the sort direction
+        /// </summary>
+        public bool Count { get; set; } = false;
+
+        /// <summary>
         /// Comma separated database columns alias set as metric
         /// The prop name are case insensitive
         /// ex: Clics, Connexions
@@ -100,45 +105,10 @@ namespace DataQuery.Net
             var dqFilter = new DataQueryFilter();
             dqFilter.Random = Random;
             dqFilter.FullTextQuery = Query;
-
-
-            /*
-            if (!string.IsNullOrEmpty(this.Period))
-            {
-                try
-                {
-                    dqFilter.DateFin = DateTime.Now;
-                    string type = this.Period.Substring(this.Period.Length - 1, 1);
-                    int nb = Convert.ToInt32(this.Period.TrimEnd(type.ToCharArray()));
-
-                    switch (type)
-                    {
-                        case "d":
-                            dqFilter.DateDebut = DateTime.Now.AddDays(-nb);
-                            break;
-                        case "y":
-                            dqFilter.DateDebut = DateTime.Now.AddYears(-nb);
-                            break;
-                        case "m":
-                            dqFilter.DateDebut = DateTime.Now.AddMonths(-nb);
-                            break;
-                        case "w":
-                            dqFilter.DateDebut = DateTime.Now.AddDays(-nb * 7);
-                            break;
-                        case "h":
-                            dqFilter.DateDebut = DateTime.Now.AddHours(-nb);
-                            break;
-                    }
-                }
-                catch
-                {
-                    throw new Exception("Impossible de parser le paramètre pédiode");
-                }
-            }*/
-
             dqFilter.PageSize = Size;
             dqFilter.PageIndex = Page;
             dqFilter.Aggregate = Aggregate;
+            dqFilter.DisableCounting = Count;
 
             // Included data
             if (!string.IsNullOrEmpty(Includes))

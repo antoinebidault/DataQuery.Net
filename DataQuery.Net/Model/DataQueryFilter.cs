@@ -29,6 +29,7 @@ namespace DataQuery.Net
         public int? PageIndex { get; set; }
         public bool Aggregate { get; set; } = true;
         public bool Random { get; set; }
+        public bool DisableCounting { get; set; }
         public List<Sort> Sorts { get; set; }
         public List<Column> Metrics { get; set; }
         public List<Column> Dimensions { get; set; }

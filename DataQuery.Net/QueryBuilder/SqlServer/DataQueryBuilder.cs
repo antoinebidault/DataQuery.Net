@@ -25,6 +25,7 @@ namespace DataQuery.Net
         private List<string> _sqlOrderBy;
         private List<string> _sqlSelectCte;
         private List<SqlParameter> _sqlWhereParams;
+        private List<SqlParameter> _sqlCountWhereParams;
 
 
         private StringBuilder _whereStatement;
@@ -54,6 +55,7 @@ namespace DataQuery.Net
             _sqlWhere = new List<string>();
             _sqlOrderBy = new List<string>();
             _sqlWhereParams = new List<SqlParameter>();
+            _sqlCountWhereParams = new List<SqlParameter>();
             this._whereStatement = new StringBuilder();
             this.firstWhereStatement = true;
 
@@ -181,8 +183,8 @@ namespace DataQuery.Net
                 // Paginate
                 sql += " OFFSET @pageS ROWS FETCH NEXT @pageE ROWS ONLY ";
 
-                AddParameter("@pageS", SqlDbType.Int, (filters.PageSize * (filters.PageIndex - 1)));
-                AddParameter("@pageE", SqlDbType.Int, (filters.PageSize));
+                AddParameter("@pageS", SqlDbType.Int, (filters.PageSize * (filters.PageIndex - 1)), false);
+                AddParameter("@pageE", SqlDbType.Int, (filters.PageSize), false);
             }
             else
             {
@@ -206,7 +208,6 @@ namespace DataQuery.Net
                 cnx.Open();
                 using (var manager = new SqlCommand(sql, cnx))
                 {
-
                     //Ajout des params
                     foreach (var p in _sqlWhereParams)
                         manager.Parameters.Add(p);
@@ -227,15 +228,8 @@ namespace DataQuery.Net
                                 if (!columnDefined)
                                 {
                                     //Ajout d'une colonne
-                                    var column = new DataQueryColumn();
-                                    var metric = _config.MetricsAndDimensions[reader.GetName(i)];
-                                    column.Name = metric.Alias;
-                                    column.Label = metric.DisplayName;
-                                    column.IsMetric = metric.IsMetric;
-                                    column.Unite = metric.Unit;
-                                    column.Color = metric.Color;
-                                    column.Type = metric.SqlType.ToString();
-                                    result.Data.Columns.Add(column);
+                                    var dimOrMetric = _config.MetricsAndDimensions[reader.GetName(i)];
+                                    result.Data.Columns.Add(new DataQuerySchemaExposedColumn(dimOrMetric));
                                 }
                             }
 
@@ -251,9 +245,10 @@ namespace DataQuery.Net
                                 {
                                     val = reader.GetValue(i);
 
-                                    // Cas spécifique des dates à formater en string
-                                    if (val != null && result.Data.Columns[i].Type == SqlDbType.Date.ToString() && val.GetType() == typeof(DateTime))
-                                        val = ((DateTime)val).ToString("dd/MM/yyyy");
+                                    if (_config.FormatRowCell != null)
+                                    {
+                                        val = _config.FormatRowCell.Invoke(val, result.Data.Columns[i]);
+                                    }
 
                                     row.Add(val);
                                 }
@@ -279,7 +274,7 @@ namespace DataQuery.Net
             {
                 result.Data.TotalRows = result.Data.Count;
             }
-            else
+            else if (!filters.DisableCounting)
             {
                 using (var cnx = new SqlConnection(_options.ConnectionString))
                 {
@@ -288,7 +283,7 @@ namespace DataQuery.Net
                     {
 
                         //Ajout des params
-                        foreach (SqlParameter p in _sqlWhereParams)
+                        foreach (SqlParameter p in _sqlCountWhereParams)
                         {
                             SqlParameter newParam = p;
                             manager.Parameters.Add(newParam);
@@ -309,7 +304,7 @@ namespace DataQuery.Net
 
             if (_options.IncludeQueryProfiling)
             {
-                result.QueryDelay = (DateTime.Now - timestamp).TotalSeconds;
+                result.Delay = (DateTime.Now - timestamp).TotalSeconds;
             }
 
             return result;
@@ -330,7 +325,7 @@ namespace DataQuery.Net
                 {
                     where.Append(" ( ");
                     where.Append(filter.Key.SqlNameComputed);
-                    where.Append($" IN (SELECT Item FROM @{ filter.Key.Alias}{i}) ");
+                    where.Append($" IN (SELECT Item FROM @{filter.Key.Alias}{i}) ");
                     where.Append(" ) ");
                     //  filter.Value
                     AddParameter($"@{filter.Key.Alias}{i}", SqlDbType.Structured, filter.Value);
@@ -643,7 +638,8 @@ namespace DataQuery.Net
         /// <param name="paramName"></param>
         /// <param name="sqlDbType"></param>
         /// <param name="value"></param>
-        private void AddParameter(string paramName, SqlDbType sqlDbType, object value)
+        /// <param name="inCountQuery"></param>
+        private void AddParameter(string paramName, SqlDbType sqlDbType, object value, bool inCountQuery = true)
         {
             SqlParameter p = new SqlParameter(paramName, sqlDbType);
 
@@ -664,8 +660,12 @@ namespace DataQuery.Net
             if (sqlDbType == SqlDbType.Structured)
                 p.TypeName = "dbo.NVarcharList";
 
+            if (inCountQuery)
+            {
+                _sqlCountWhereParams.Add(p);
+            }
             _sqlWhereParams.Add(p);
+
         }
     }
-
 }
