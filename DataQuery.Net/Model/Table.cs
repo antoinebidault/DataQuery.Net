@@ -13,7 +13,7 @@ namespace DataQuery.Net
             this.DisplayName = alias;
             this.Alias = alias;
             this.SqlName = sqlName ?? alias;
-            Columns = new List<Column>();
+            Columns = new List<Dimension>();
             TypeJoin = TypeJoin.INNER;
             Size = DataBaseSize.Standard;
         }
@@ -22,7 +22,7 @@ namespace DataQuery.Net
         public string SqlName { get; }
         public int Order { get; set; }
         public TypeJoin TypeJoin { get; set; }
-        public List<Column> Columns { get; set; }
+        public List<Dimension> Columns { get; set; }
         public string DefaultFilterUsedIfTableUsed { get; set; }
         public DataBaseSize Size { get; set; }
         public bool Root { get; set; }

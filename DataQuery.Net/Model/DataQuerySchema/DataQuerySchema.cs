@@ -41,11 +41,11 @@ namespace DataQuery.Net
         public Dictionary<string, Table> Tables { get; }
 
 
-        public Dictionary<string, Column> Metrics
+        public Dictionary<string, Dimension> Metrics
         {
             get
             {
-                var dic = new Dictionary<string, Column>();
+                var dic = new Dictionary<string, Dimension>();
                 foreach (var item in MetricsAndDimensions)
                 {
                     if (item.Value.IsMetric)
@@ -56,11 +56,11 @@ namespace DataQuery.Net
                 return dic;
             }
         }
-        public Dictionary<string, Column> Dimensions
+        public Dictionary<string, Dimension> Dimensions
         {
             get
             {
-                var dic = new Dictionary<string, Column>();
+                var dic = new Dictionary<string, Dimension>();
                 foreach (var item in MetricsAndDimensions)
                 {
                     if (!item.Value.IsMetric)
@@ -72,11 +72,11 @@ namespace DataQuery.Net
             }
         }
 
-        public Dictionary<string, Column> MetricsAndDimensions
+        public Dictionary<string, Dimension> MetricsAndDimensions
         {
             get
             {
-                var dic = new Dictionary<string, Column>();
+                var dic = new Dictionary<string, Dimension>();
                 foreach (var table in Tables.Values)
                 {
                     foreach (var prop in table.Columns)

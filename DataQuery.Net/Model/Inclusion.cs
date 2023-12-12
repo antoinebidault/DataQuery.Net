@@ -37,8 +37,8 @@ namespace DataQuery.Net
             this.LinkedPropertyColumnName = this.LinkedTable.Alias + "." + KeyTable.SqlJoins.FirstOrDefault().Value;
         }
 
-        public Column Prop { get; set; }
-        public Column KeyTable { get; set; }
+        public Dimension Prop { get; set; }
+        public Dimension KeyTable { get; set; }
         public string LinkedPropertyColumnName { get; set; }
         public Table LinkedTable { get; set; }
         public Table Table { get; set; }

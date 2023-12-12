@@ -88,9 +88,17 @@ namespace DataQuery.Net
         }
 
 
-        public static void AddColumn(this Table table, Column column)
+        public static void AddDimension(this Table table, Dimension column)
         {
+            column.TableAlias = table.Alias;
             table.Columns.Add(column);
+        }
+
+        public static void AddMetric(this Table table, Metric metric)
+        {
+            metric.TableAlias = table.Alias;
+            metric.IsMetric = true;
+            table.Columns.Add(metric);
         }
 
 

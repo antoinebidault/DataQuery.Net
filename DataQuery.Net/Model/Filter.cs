@@ -93,7 +93,7 @@ namespace DataQuery.Net
     /// <summary>
     /// Ex: eventId
     /// </summary>
-    public Column Dimension { get; set; }
+    public Dimension Dimension { get; set; }
 
     /// <summary>
     /// Si lazy, on affiche le filtre que si la table dépendante est utilisée.

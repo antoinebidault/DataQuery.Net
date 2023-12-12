@@ -7,14 +7,25 @@ using System.Threading.Tasks;
 
 namespace DataQuery.Net
 {
+
+    public class Metric : Dimension
+    {
+        public Metric()
+        {
+            this.IsMetric = true;
+
+            // By default, metric are setup as double
+            this.PropertyType = typeof(double);
+        }
+    }
+
     /// <summary>
     /// Represents a single property
     /// </summary>
-    public class Column
+    public class Dimension
     {
-        public Column(string tableAlias)
+        public Dimension()
         {
-            this.TableAlias = tableAlias;
             this.SqlType = SqlDbType.NVarChar;
             this.Displayed = true;
             this.SqlJoins = new Dictionary<string, string>();
@@ -23,6 +34,12 @@ namespace DataQuery.Net
             this.Color = "#F86410";
             MetaDatas = new Dictionary<string, object>();
         }
+
+        /// <summary>
+        /// Table alias
+        /// </summary>
+        public string TableAlias { get; set; }
+
 
         [Obsolete]
         /// <summary>
@@ -49,7 +66,7 @@ namespace DataQuery.Net
         /// A simple metadata dictionnary
         /// </summary>
         public IDictionary<string, object> MetaDatas { get; set; }
-        public string TableAlias { get; }
+
 
         /// <summary>
         /// SQL Type overiden (use the native type if you don't care)

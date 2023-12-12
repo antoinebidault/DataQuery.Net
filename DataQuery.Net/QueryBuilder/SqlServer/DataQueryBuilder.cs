@@ -70,7 +70,7 @@ namespace DataQuery.Net
             StringBuilder sqlQuery = new StringBuilder();
 
             // DIMENSIONS
-            foreach (Column champ in filters.Dimensions)
+            foreach (Dimension champ in filters.Dimensions)
             {
                 _sqlSelect.Add(champ.SqlNameComputed + " AS " + champ.Alias);
                 _sqlSelectCte.Add(champ.Alias);
@@ -78,7 +78,7 @@ namespace DataQuery.Net
             }
 
             // Metrics handling
-            foreach (Column champ in filters.Metrics)
+            foreach (Dimension champ in filters.Metrics)
             {
                 _sqlSelect.Add(champ.SqlNameComputed + " AS " + champ.Alias);
                 _sqlSelectCte.Add(champ.Alias);
@@ -311,7 +311,7 @@ namespace DataQuery.Net
         }
 
 
-        private void HandleBatchWhereFilters(IDictionary<Column, DataTable> filters)
+        private void HandleBatchWhereFilters(IDictionary<Dimension, DataTable> filters)
         {
 
             if (filters == null)

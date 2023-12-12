@@ -259,10 +259,10 @@ namespace DataQuery.Net
             // Dependent tables
             foreach (Table table in config.Tables.Values)
             {
-                foreach (Column prop in table.Columns)
+                foreach (Dimension prop in table.Columns)
                 {
 
-                    foreach (Column dim in dqFilter.ForcedDateFilter)
+                    foreach (Dimension dim in dqFilter.ForcedDateFilter)
                     {
                         if (dim.Alias == prop.Alias)
                         {
@@ -270,7 +270,7 @@ namespace DataQuery.Net
                         }
                     }
 
-                    foreach (Column metric in dqFilter.Metrics)
+                    foreach (Dimension metric in dqFilter.Metrics)
                     {
                         if (metric.Alias == prop.Alias)
                         {
@@ -278,7 +278,7 @@ namespace DataQuery.Net
                         }
                     }
 
-                    foreach (Column dim in dqFilter.Dimensions)
+                    foreach (Dimension dim in dqFilter.Dimensions)
                     {
                         if (dim.Alias == prop.Alias)
                         {
