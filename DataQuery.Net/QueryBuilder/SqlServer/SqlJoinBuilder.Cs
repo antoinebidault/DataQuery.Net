@@ -38,12 +38,16 @@ namespace DataQuery.Net
             string output = "";
             foreach (var table in this.tablesIncluded.Values)
             {
-                if (!string.IsNullOrEmpty(table.DefaultFilterUsedIfTableUsed))
+                if (table.DefaultFilterUsedIfTableUsed == null)
+                    continue;
+
+                var filters = table.DefaultFilterUsedIfTableUsed.Replace("<table>", table.Alias);
+                if (!string.IsNullOrEmpty(filters))
                 {
                     if (output != "")
                         output += " AND ";
 
-                    output += string.Format(" ({0}) ", table.DefaultFilterUsedIfTableUsed);
+                    output += string.Format(" ({0}) ", filters);
                 }
             }
             return output;
