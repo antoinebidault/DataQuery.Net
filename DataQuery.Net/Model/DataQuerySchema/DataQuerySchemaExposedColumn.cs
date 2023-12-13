@@ -65,6 +65,10 @@ namespace DataQuery.Net
             {
                 return "datetime";
             }
+            else if (type == typeof(Guid))
+            {
+                return "guid";
+            }
             return "string";
         }
 

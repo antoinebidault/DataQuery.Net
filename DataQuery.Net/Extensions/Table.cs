@@ -91,6 +91,12 @@ namespace DataQuery.Net
         public static void AddDimension(this Table table, Dimension column)
         {
             column.TableAlias = table.Alias;
+
+
+            if (table.Columns.Any(m => m.Alias == column.Alias))
+            {
+                throw new DataQueryInvalidConfigException($"This dimension has already been added on the table {table.DisplayName}, field name : {column.Alias}");
+            }
             table.Columns.Add(column);
         }
 
@@ -98,12 +104,22 @@ namespace DataQuery.Net
         {
             metric.TableAlias = table.Alias;
             metric.IsMetric = true;
+
+            if (table.Columns.Any(m => m.Alias == metric.Alias))
+            {
+                throw new DataQueryInvalidConfigException($"This metric has already been added on the table {table.DisplayName}, field name : {metric.Alias}");
+            }
             table.Columns.Add(metric);
         }
 
 
         public static void OneToManyJoin(this Table from, Table to, string columnTo = null, string columnFrom = "Id")
         {
+            if (from.Alias == to.Alias)
+            {
+                throw new DataQueryJoinException($"OneToManyJoin Error : unable to self join a table");
+            }
+
             if (columnTo == null)
             {
                 columnTo = from.Alias + "Id";
