@@ -19,7 +19,7 @@ namespace DataQuery.Net
             this.Group = col.Group;
             this.Unit = col.Unit;
             this.Color = col.Color;
-            this.MetaDatas = col.MetaDatas;
+            this.MetaDatas = col.Items;
             this.PropertyType = col.PropertyType;
             this.Values = col.Values;
         }

@@ -32,7 +32,7 @@ namespace DataQuery.Net
             this.AllowedToFilter = true;
             this.AllowedToView = true;
             this.Color = "#F86410";
-            MetaDatas = new Dictionary<string, object>();
+            Items = new Dictionary<string, object>();
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace DataQuery.Net
         /// <summary>
         /// A simple metadata dictionnary
         /// </summary>
-        public IDictionary<string, object> MetaDatas { get; set; }
+        public IDictionary<string, object> Items { get; set; }
 
 
         /// <summary>
