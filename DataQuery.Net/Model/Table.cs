@@ -30,6 +30,11 @@ namespace DataQuery.Net
         public bool NotDiscoverable { get; set; }
         public string DisplayName { get; set; }
 
+        /// <summary>
+        /// A sample dic for storing things
+        /// </summary>
+        public IDictionary<string,object> Items { get; set; }
+
     }
 
     public enum DataBaseSize
