@@ -44,11 +44,19 @@ namespace DataQuery.Net
 
         private string GetType(Type type)
         {
+            if (type == null)
+                return "string";
+
             type = Nullable.GetUnderlyingType(type) ?? type;
 
             if (type == typeof(string))
             {
                 return "string";
+            }
+
+            else if (type == typeof(bool))
+            {
+                return "bool";
             }
             else if (type.IsEnum)
             {
