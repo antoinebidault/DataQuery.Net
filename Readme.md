@@ -5,7 +5,7 @@
 
 # DataQuery.Net
 
-The data query is an ASP.Net Core library for querying dynamically huge database using a basic querying language similar to Google analytics's API Explorer querying language (dimensions, metrics, filters...) .
+The data query is an ASP.Net library for querying dynamically huge database using a basic querying language similar to Google analytics's API Explorer querying language (dimensions, metrics, filters...) .
 This tool was particularly useful for building a custom analytic tools on a bug database using millions of lines. If you need to do lots of dynamics queries, time series, pie charts, this library can be particularly useful.
 
 # Disclaimer
@@ -15,14 +15,14 @@ Use it at your own risk, this library is still WIP and needs some refactoring an
 # Prerequisite
 
 You need an SQL database on SQL Server 2012+
-ASP.Net Core 3.1
+ASP.Net 3+
 You'll need an sql database structured as a star :
 [https://en.wikipedia.org/wiki/Star_schema](https://en.wikipedia.org/wiki/Star_schema)
 ![Database star model](database-star-model.png)
 
-# Quickstart
+# Quickstart guide
 
-Installer le package nuget
+Install nuget package
 
 ```
 package-install DataQuery.Net
@@ -51,22 +51,22 @@ Implement the IDataQueryProvider interface to provide the metrics and dimensions
       var cnx = "Ma chaine de connexion à la BDD ici";
       var config = new DataQueryCollections() { };
 
-      config.AddTable( new Table("User")
+      var table = config.AddTable( new Table("User")
       {
         // The table name, it must match the key name
         Name = "User",
         // The AS alias "select from table AS {alias}"
-        Alias = "U",
-        // The properties you would like to query (Just the columns you need to query or used in relationships)
-        Columns = new List<Column>
-        {
-          new Column()
+        Alias = "U"
+      });
+
+      table.AddDimension(new Column()
           {
-	    // ALias : The unique name of the dim or metric
-            Alias = "UserId",
-	    // If it's a metric, you must use the proper aggregation operator : e.g. SUM(), AVG(), COUNT()...
-            ColumnName = "U.Id",
-	    // Field description
+	          // Name : The unique name of the dim or metric
+            Name = "UserId",
+	          // If it's a metric, you must use the proper aggregation operator : e.g. SUM(), AVG(), COUNT()...
+            // <table> will be automatically replaced by the table alias
+            SqlName = "<table>.Id",
+	          // Field description
             Description = "User's id",
             Label="Userid",
             // Le type SQL du champ sera utile pour parser les dimensions sélectionnés.
@@ -81,62 +81,70 @@ Implement the IDataQueryProvider interface to provide the metrics and dimensions
             {
               {"User_Stat", "UserId" }
             }
-          },
-          new Column()
+          });
+
+          table.AddDimension(new Dimension()
           {
-            Alias = "Name",
-            ColumnName = "U.Name",
+            Name = "Name",
+            SqlName = "<table>.Name",
             Description = "User's name",
             Label="Username",
             Displayed = true
-          },
-          new Column()
+          });
+
+          table.AddDimension(new Dimension()
           {
             Alias = "Email",
-            ColumnName = "U.Email",
+            Name = "<table>.Email",
             Description = "Email",
             Label="Email",
             Displayed = true
-          }
-        }
-      });
+          });
+          ,
 
-      config.AddTable(new Table("User_Stat")
+
+      var userStatTable = config.AddTable(new Table("User_Stat")
       {
         Name = "User_Stat",
-        Alias = "US",
-        Props = new List<Column>
-        {
-          new Column()
+        Alias = "US"
+      });
+
+
+      userStatTable.AddDimension(
+          new Dimension()
           {
-            Alias = "UserRef",
-            ColumnName = "US.UserId",
+            Name = "UserRef",
+            SqlName = "<table>.UserId", // Table will be replaced by the table alias dynamically
             Displayed = true,
             SqlJoins = new Dictionary<string, string>
             {
               {"User", "UserId" }
             }
-          },
-          new Column()
+          }
+      );
+
+       userStatTable.AddDimension(
+          new Dimension()
           {
-            Alias = "Date",
-            ColumnName = "US.Date",
+            Name = "Date",
+            SqlName = "<table>.Date",
             Description = "Date",
             SqlType = System.Data.SqlDbType.Date,
             Displayed = true
-          },
-          new Column()
+          }
+      );
+
+
+       userStatTable.AddMetric(
+           new Metric()
           {
             Alias = "NbConnexion",
-            ColumnName = "SUM(U.NbConnexion)",
+            ColumnName = "SUM(<table>.NbConnexion)",
             Description = "NbConnexion",
             Label="NbConnexion",
-            IsMetric = true,
             Displayed = true
           }
-        }
-      };
-
+      );
 
       return config;
     }
@@ -150,6 +158,32 @@ In this sample, we have configured two tables :
 
 **Important note**
 The metric's alias must be unique, because it will be used for querying data
+
+# Query caching
+
+By default, caching of query result is available
+
+## Enable standard caching as following
+
+Youc an enable distributed caching as following
+
+```CSharp
+services.AddDataQuery(options => {
+    options.CacheEnabled = true;
+    options.CacheDuration = 100; // Cache duration in seconds
+});
+```
+
+## Support of Distributed caching
+
+You can enable distributed caching service like Redis as following (IDistributedCache must be properly setup in your app)
+
+```CSharp
+services.AddDataQuery(options => {
+    options.DestributedCache = true;
+    options.CacheEnabled = true;
+});
+```
 
 # Querying the data
 
@@ -174,10 +208,10 @@ public TestController : Controller
 
 ```
 
-Here is a sample query to get the nb connexions per date on 2 weeks for Jean-Marc :
+Here is a sample query to get the nb connexions per date for Jean-Marc :
 
 ```CSharp
-/Test?dimensions=Date&metrics=NbConnexion&period=2w&asc=false&sort=Date&filters=Name%3DJean-Marc
+/Test?dimensions=Date&metrics=NbConnexion&asc=false&sort=Date&filters=Name%3DJean-Marc
 ```
 
 # Query params list
@@ -187,9 +221,6 @@ Here is a sample query to get the nb connexions per date on 2 weeks for Jean-Mar
 - page : page index
 - query: full text query (using FullText index)
 - queryConstraint : for limiting field used in full text query.
-- start : start date for period filtering
-- end : end date for period filtering
-- period : Perdiods : 1w = 1 week, 3m = 3 months
 - sort : name of the metric or dimension used to sort data
 - dimensions : comma separated dimensions to select, ex: UserName, Email
 - metrics : list of metrics to query, ex: NbConnexions
