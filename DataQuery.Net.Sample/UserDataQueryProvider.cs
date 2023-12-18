@@ -19,14 +19,14 @@ namespace DataQuery.Net.Sample
                 DisplayName = "Users",
                 Root = true,
                 // Les propriétés correspondent à l'ensemble des dimensions ou métriques contenus dans la table que vous souhaitez requêter (Inutile de mettre l'intégralité des colonnes, juste ce dont vous avez besoin)
-                Columns = new List<Column>
+                Columns = new List<Dimension>
                 {
-                    new Column()
+                    new Dimension()
                     {
                         // ALias : le nom avec lequel vous souhaitez requêter la propriété
-                        Alias = "UserId",
+                        Name = "UserId",
                         // La colonne : correspond à ce qui va être sélectionné par le requêteur. Si c'est uune métrique, il faudra mettre une requête d'aggrégation SUM ou un COUNT
-                        ColumnName = "U.Id",
+                        SqlName = "U.Id",
                         // La description du champ
                         Description = "User's id",
                         DisplayName="Userid",
@@ -43,18 +43,18 @@ namespace DataQuery.Net.Sample
                             {"User_Stat", "UserId" }
                         }
                     },
-                    new Column()
+                    new Dimension()
                     {
-                    Alias = "Name",
-                    ColumnName = "U.Name",
+                    Name = "Name",
+                    SqlName = "U.Name",
                     Description = "User's name",
                     DisplayName="Username",
                     Displayed = true
                     },
-                    new Column()
+                    new Dimension()
                     {
-                    Alias = "Email",
-                    ColumnName = "U.Email",
+                    Name = "Email",
+                    SqlName = "U.Email",
                     Description = "Email",
                     DisplayName="Email",
                     Displayed = true
@@ -66,37 +66,37 @@ namespace DataQuery.Net.Sample
             {
                 Alias = "US",
                 DisplayName = "User stats",
-                Columns = new List<Column>
+                Columns = new List<Dimension>
                 {
-                new Column()
-                {
-                Alias = "UserRef",
-                ColumnName = "US.UserId",
-                Displayed = true,
-                SqlJoins = new Dictionary<string, string>
-                {
-                {"User", "Id" }
-                }
-                },
-                new Column()
-                {
-                Alias = "Date",
-                ColumnName = "US.Date",  
-                // En passant ce flag à true, cette dimension sera utilisée pour filtrer les dates
-                UsedToFilterDate = true,
-                Description = "Date",
-                SqlType = System.Data.SqlDbType.Date,
-                Displayed = true
-                },
-                new Column()
-                {
-                Alias = "NbConnexion",
-                ColumnName = "SUM(US.NbConnexion)",
-                Description = "NbConnexion",
-                DisplayName="NbConnexion",
-                IsMetric = true,
-                Displayed = true
-                }
+                    new Dimension()
+                    {
+                        Name = "UserRef",
+                        SqlName = "US.UserId",
+                        Displayed = true,
+                        SqlJoins = new Dictionary<string, string>
+                        {
+                            {"User", "Id" }
+                        }
+                    },
+                    new Dimension()
+                    {
+                        Name = "Date",
+                        SqlName = "US.Date",  
+                        // En passant ce flag à true, cette dimension sera utilisée pour filtrer les dates
+                        UsedToFilterDate = true,
+                        Description = "Date",
+                        SqlType = System.Data.SqlDbType.Date,
+                        Displayed = true
+                    },
+                    new Dimension()
+                    {
+                        Name = "NbConnexion",
+                        SqlName = "SUM(US.NbConnexion)",
+                        Description = "NbConnexion",
+                        DisplayName="NbConnexion",
+                        IsMetric = true,
+                        Displayed = true
+                    }
                 }
             });
 
