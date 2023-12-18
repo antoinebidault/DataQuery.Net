@@ -82,7 +82,7 @@ namespace DataQuery.Net
 
             foreach (var col in Columns)
             {
-                dt.Columns.Add(new DataColumn(col.Id + "(" + col.DisplayName + ")", col.PropertyType) );
+                dt.Columns.Add(new DataColumn(col.Id + " (" + col.DisplayName + ")", col.PropertyType) );
             }
 
             foreach (object[] row in Rows)

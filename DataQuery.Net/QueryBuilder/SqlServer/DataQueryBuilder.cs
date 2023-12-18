@@ -384,7 +384,17 @@ namespace DataQuery.Net
 
                                 where.Append(filter.Type.GetSqlLabel());
                                 where.Append(" @" + dim.Alias + i);
-                                AddParameter("@" + dim.Alias + i, dim.SqlTypeAuto, filter.Value);
+
+                                if ((filter.Dimension.PropertyType == typeof(DateTime) || filter.Dimension.PropertyType == typeof(DateTime?)) && filter.Value.ToString().StartsWith("\""))
+                                {
+                                    var ts = TimeSpan.Parse(filter.Value.Replace("\"", ""));
+                                    var date = DateTime.UtcNow.Add(ts);
+                                    AddParameter("@" + dim.Alias + i, SqlDbType.DateTime2, date);
+                                }
+                                else
+                                {
+                                    AddParameter("@" + dim.Alias + i, dim.SqlTypeAuto, filter.Value);
+                                }
                             }
 
                             if (filter.Type == OperatorType.Different && !string.IsNullOrEmpty(filter.Value))

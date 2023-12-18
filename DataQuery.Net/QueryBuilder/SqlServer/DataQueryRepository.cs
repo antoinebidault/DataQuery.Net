@@ -1,4 +1,5 @@
 ﻿using DataQuery.Net.Extensions;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -10,11 +11,13 @@ namespace DataQuery.Net
     public class DataQuerySqlServerRepository : IDataQueryRepository
     {
         private readonly IMemoryCache _cache;
+        private readonly IDistributedCache _distributed;
         private readonly DataQueryOptions _options;
 
-        public DataQuerySqlServerRepository(DataQueryOptions options , IMemoryCache cache)
+        public DataQuerySqlServerRepository(DataQueryOptions options, IMemoryCache cache, IDistributedCache distributed)
         {
             this._cache = cache;
+            this._distributed = distributed;
             this._options = options;
         }
 
@@ -24,11 +27,29 @@ namespace DataQuery.Net
 
             if (_options.CacheEnabled)
             {
-                return _cache.GetOrCreate(uniqueKey, (e) =>
+                if (_options.DistributedCache)
                 {
-                    e.AbsoluteExpiration = DateTime.Now.AddSeconds(_options.CacheDuration);
-                    return QueryBase(config, filter);
-                });
+                    var result = _distributed.GetString(uniqueKey);
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        return JsonConvert.DeserializeObject<DataQueryResult>(result);
+                    }
+
+                   var data = QueryBase(config, filter);
+
+                    _distributed.SetString(uniqueKey,JsonConvert.SerializeObject(data, Formatting.None), new DistributedCacheEntryOptions()
+                    {
+                         AbsoluteExpiration = DateTime.Now.AddSeconds(_options.CacheDuration)
+                    });
+                }
+                else
+                {
+                    return _cache.GetOrCreate(uniqueKey, (e) =>
+                    {
+                        e.AbsoluteExpiration = DateTime.Now.AddSeconds(_options.CacheDuration);
+                        return QueryBase(config, filter);
+                    });
+                }
             }
 
             return QueryBase(config, filter);

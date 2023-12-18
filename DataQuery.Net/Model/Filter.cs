@@ -78,6 +78,7 @@ namespace DataQuery.Net
         throw new Exception(message);
       }
 
+
     }
 
     /// <summary>
