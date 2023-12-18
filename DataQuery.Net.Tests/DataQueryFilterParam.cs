@@ -20,10 +20,10 @@ namespace DataQuery.Net.Tests
                 Aggregate = false,
                 Size = 10,
                 Page = 1,
-                Dimensions = "User.Name,User.Email,User_Stat.Date",
+                Dimensions = new[] { "User.Name", "User.Email", "User_Stat.Date" },
                 Asc = true,
                 Filters = "User.Name=~Jean Marc%",
-                Metrics = "User_Stat.NbConnexion"
+                Metrics = new[] { "User_Stat.NbConnexion" }
             };
 
             var cleanFilter = result.Parse(fixture.Config);

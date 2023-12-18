@@ -12,13 +12,13 @@ namespace DataQuery.Net.Tests
             Config.AddTable(new Table("User")
             {
                 Alias = "U",
-               Root = true,
-                Columns = new List<Column>
+                Root = true,
+                Columns = new List<Dimension>
                 {
-                    new Column()
+                    new Dimension()
                     {
-                    Alias = "UserId",
-                    ColumnName = "U.Id",
+                    Name = "UserId",
+                    SqlName = "U.Id",
                     Description = "User's id",
                     DisplayName="Userid",
                     Displayed = true,
@@ -27,18 +27,18 @@ namespace DataQuery.Net.Tests
                         {"User_Stat", "UserId" }
                     }
                     },
-                    new Column()
+                    new Dimension()
                     {
-                    Alias = "Name",
-                    ColumnName = "U.Name",
+                    Name = "Name",
+                    SqlName = "U.Name",
                     Description = "User's name",
                     DisplayName="Username",
                     Displayed = true
                     },
-                    new Column()
+                    new Dimension()
                     {
-                    Alias = "Email",
-                    ColumnName = "U.Email",
+                    Name = "Email",
+                    SqlName = "U.Email",
                     Description = "Email",
                     DisplayName="Email",
                     Displayed = true
@@ -49,31 +49,31 @@ namespace DataQuery.Net.Tests
             Config.AddTable(new Table("User_Stat")
             {
                 Alias = "US",
-                Columns = new List<Column>
+                Columns = new List<Dimension>
                 {
-                    new Column()
+                    new Dimension()
                     {
-                         Alias = "UserIdStat",
-                        ColumnName = "US.UserId",
+                         Name = "UserIdStat",
+                        SqlName = "US.UserId",
                         Displayed = true,
                         SqlJoins = new Dictionary<string, string>
                         {
                             {"User", "UserId" }
                         }
                     },
-                    new Column()
+                    new Dimension()
                     {
-                        Alias = "Date",
-                        ColumnName = "US.Date",
+                        Name = "Date",
+                        SqlName = "US.Date",
                         Description = "Date",
                         UsedToFilterDate = true,
                         SqlType = System.Data.SqlDbType.Date,
                         Displayed = true
                     },
-                    new Column()
+                    new Dimension()
                     {
-                        Alias = "NbConnexion",
-                        ColumnName = "SUM(U.NbConnexion)",
+                        Name = "NbConnexion",
+                        SqlName = "SUM(U.NbConnexion)",
                         Description = "NbConnexion",
                         DisplayName="NbConnexion",
                         IsMetric = true,
