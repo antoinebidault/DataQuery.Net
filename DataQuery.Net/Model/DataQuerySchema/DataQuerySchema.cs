@@ -6,17 +6,12 @@ using System.Linq;
 
 namespace DataQuery.Net
 {
-
-
     /// <summary>
     /// Contains all informations about the database
     /// </summary>
     public class DataQuerySchema
     {
-        public DataQuerySchema()
-        {
-            Tables = new Dictionary<string, Table>(StringComparer.InvariantCultureIgnoreCase);
-        }
+        public Dictionary<string, Table> Tables { get; } = new Dictionary<string, Table>(StringComparer.InvariantCultureIgnoreCase);
 
         public Func<object, DataQuerySchemaExposedColumn, object> FormatRowCell { get; set; }
 
@@ -37,9 +32,6 @@ namespace DataQuery.Net
         {
             this.Tables.Remove(tableName);
         }
-
-        public Dictionary<string, Table> Tables { get; }
-
 
         public Dictionary<string, Dimension> Metrics
         {
@@ -71,7 +63,6 @@ namespace DataQuery.Net
                 return dic;
             }
         }
-
         public Dictionary<string, Dimension> MetricsAndDimensions
         {
             get

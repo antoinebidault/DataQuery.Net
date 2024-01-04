@@ -36,21 +36,28 @@ namespace DataQuery.Net
         }
 
         /// <summary>
+        /// The dimension programatic
+        /// e.g. ClosedUser
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
         /// Table alias
+        /// e.g. DSR
         /// </summary>
         public string TableAlias { get; set; }
 
-
-        [Obsolete]
         /// <summary>
-        /// Please use "SqlName" instead
+        /// Unique identifier of the dimension across all the table
+        /// e.g. DSR_ClosedUser
         /// </summary>
-        public string ColumnName { get; set; }
+        public string Alias { get { return $"{this.TableAlias}_{this.Name}"; } }
 
         /// <summary>
         /// SQL column name, e.g. USER.Name, SUM(USER.NbConnexions)
         /// </summary>
         public string SqlName { get; set; }
+
         internal string SqlNameComputed
         {
             get
@@ -91,8 +98,6 @@ namespace DataQuery.Net
             }
         }
 
-        public string Name { get; set; }
-        public string Alias { get { return $"{this.TableAlias}_{this.Name}"; } }
 
         /// <summary>
         /// User friendly label
@@ -130,7 +135,7 @@ namespace DataQuery.Net
         public string Color { get; set; }
 
         /// <summary>
-        /// Set true to display this prop
+        /// Set true to display this prop in exposed schema
         /// </summary>
         public bool Displayed { get; set; }
 
@@ -151,9 +156,22 @@ namespace DataQuery.Net
 
         /// <summary>
         /// Sql joins
+        /// Key: table alias
+        /// Value: destination foreign key alias name
         /// </summary>
         public Dictionary<string, string> SqlJoins { get; set; }
+
+        /// <summary>
+        /// List of possible values
+        /// </summary>
         public IEnumerable<ColumnValue> Values { get; set; }
+
+        [Obsolete]
+        /// <summary>
+        /// Please use "SqlName" instead
+        /// </summary>
+        public string ColumnName { get; set; }
+
     }
 
     public class ColumnValue
