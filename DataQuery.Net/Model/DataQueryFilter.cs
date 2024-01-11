@@ -18,7 +18,6 @@ namespace DataQuery.Net
             Dimensions = new List<Dimension>() { };
             FullTextQueryConstraints = new List<Dimension>() { };
             Tables = new Dictionary<string, Table>();
-           //  Metrics = new List<Dimension>() { };
             Filters = new List<Filter>() { };
             Inclusions = new List<Inclusion>();
             ForcedDateFilter = new List<Dimension>();
@@ -31,7 +30,6 @@ namespace DataQuery.Net
         public bool Random { get; set; }
         public bool DisableCounting { get; set; }
         public List<Sort> Sorts { get; set; }
-       // public List<Dimension> Metrics { get; set; }
         public List<Dimension> Dimensions { get; set; }
         public bool IsFullTextQuery { get { return !string.IsNullOrEmpty(FullTextQuery); } }
         public string FullTextQuery { get; internal set; }
