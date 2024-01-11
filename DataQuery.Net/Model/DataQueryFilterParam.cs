@@ -55,14 +55,7 @@ namespace DataQuery.Net
         public bool Count { get; set; } = false;
 
         /// <summary>
-        /// Comma separated database columns alias set as metric
-        /// The prop name are case insensitive
-        /// ex: Clics, Connexions
-        /// </summary>
-        public IEnumerable<string> Metrics { get; set; }
-
-        /// <summary>
-        /// Comma separated database columns alias
+        /// Comma separated database columns alias (metrics or dimensions are allowed)
         /// e.g. Date,Campaign
         /// </summary>
         public IEnumerable<string> Dimensions { get; set; }
@@ -125,15 +118,15 @@ namespace DataQuery.Net
             {
                 foreach (string dim in Dimensions.Select(m => m.Trim()))
                 {
-                    if (config.Dimensions.ContainsKey(dim))
+                    if (config.MetricsAndDimensions.ContainsKey(dim))
                     {
-                        if (config.Dimensions[dim].IsGeography)
+                        if (config.MetricsAndDimensions[dim].IsGeography)
                             throw new InvalidOperationException(string.Format("Vous sélectionnez un type géography, ce qui n'est pas autorisé : {0} ! ", dim));
 
-                        if (!config.Dimensions[dim].AllowedToView)
+                        if (!config.MetricsAndDimensions[dim].AllowedToView)
                             throw new InvalidOperationException(string.Format("Vous n'avez pas les droits pour exporter cette dimension : {0} ! ", dim));
 
-                        dqFilter.Dimensions.Add(config.Dimensions[dim]);
+                        dqFilter.Dimensions.Add(config.MetricsAndDimensions[dim]);
                     }
                 }
             }
@@ -182,21 +175,7 @@ namespace DataQuery.Net
             }
 
 
-            //ForcedDateFilter
-            if (!string.IsNullOrEmpty(this.ForcedDateFilter))
-            {
-                foreach (string dim in ForcedDateFilter.Split(',').Select(m => m.Trim()))
-                {
-                    if (config.Dimensions.ContainsKey(dim))
-                    {
-                        if (!config.Dimensions[dim].AllowedToFilter && config.Dimensions[dim].SqlType != SqlDbType.DateTime && config.Dimensions[dim].SqlType != SqlDbType.Date)
-                            throw new InvalidOperationException(string.Format("Le paramètre forcedDateFilter est incorrecte : {0} ! ", dim));
-
-                        dqFilter.ForcedDateFilter.Add(config.Dimensions[dim]);
-                    }
-                }
-            }
-
+            /*
             //Métriques
             if (Metrics != null && Metrics.Any())
             {
@@ -214,7 +193,7 @@ namespace DataQuery.Net
                         dqFilter.Metrics.Add(config.Metrics[met]);
                     }
                 }
-            }
+            }*/
 
 
 
@@ -239,14 +218,10 @@ namespace DataQuery.Net
             // Order by a specific dimension
             if (!string.IsNullOrEmpty(this.Sort))
             {
-                Sort sortClean = new Sort { Prop = config.Metrics.Values.First(), Asc = this.Asc };
-                if (Dimensions != null && this.Dimensions.Any() && Dimensions.Contains(this.Sort) && config.Dimensions.ContainsKey(this.Sort))
+                Sort sortClean = new Sort { Prop = config.MetricsAndDimensions[this.Dimensions.FirstOrDefault()], Asc = this.Asc };
+                if (Dimensions != null && this.Dimensions.Any() && Dimensions.Contains(this.Sort) && config.MetricsAndDimensions.ContainsKey(this.Sort))
                 {
-                    sortClean.Prop = config.Dimensions[this.Sort];
-                }
-                else if (Metrics != null && Metrics.Contains(this.Sort) && config.Metrics.ContainsKey(this.Sort))
-                {
-                    sortClean.Prop = config.Metrics[this.Sort];
+                    sortClean.Prop = config.MetricsAndDimensions[this.Sort];
                 }
                 else
                 {
@@ -265,14 +240,6 @@ namespace DataQuery.Net
                     foreach (Dimension dim in dqFilter.ForcedDateFilter)
                     {
                         if (dim.Alias == prop.Alias)
-                        {
-                            dqFilter.Tables[table.Alias] = table;
-                        }
-                    }
-
-                    foreach (Dimension metric in dqFilter.Metrics)
-                    {
-                        if (metric.Alias == prop.Alias)
                         {
                             dqFilter.Tables[table.Alias] = table;
                         }

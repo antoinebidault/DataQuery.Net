@@ -74,14 +74,8 @@ namespace DataQuery.Net
             {
                 _sqlSelect.Add(champ.SqlNameComputed + " AS " + champ.Alias);
                 _sqlSelectCte.Add(champ.Alias);
-                _sqlGroupBy.Add(champ.SqlNameComputed);
-            }
-
-            // Metrics handling
-            foreach (Dimension champ in filters.Metrics)
-            {
-                _sqlSelect.Add(champ.SqlNameComputed + " AS " + champ.Alias);
-                _sqlSelectCte.Add(champ.Alias);
+                if (!champ.IsMetric)
+                 _sqlGroupBy.Add(champ.SqlNameComputed);
             }
 
             // Sorting
