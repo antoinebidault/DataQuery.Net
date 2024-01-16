@@ -1,4 +1,6 @@
-﻿namespace DataQuery.Net
+﻿using System.Threading.Tasks;
+
+namespace DataQuery.Net
 {
     public class DefaultDataQuery : IDataQuery
     {
@@ -10,9 +12,9 @@
             _provider = provider;
             _repo = repo;
         }
-        public DataQueryResult Query(DataQueryFilterParams filter)
+        public async Task<DataQueryResult> QueryAsync(DataQueryFilterParams filter)
         {
-            return _repo.Query(_provider.Provide(), filter);
+            return await _repo.QueryAsync(_provider.Provide(), filter);
         }
 
         public DataQuerySchemaExposed GetSchema()

@@ -68,7 +68,7 @@ namespace DataQuery.Net
         public List<DataQuerySchemaExposedColumn> Columns { get; set; }
         public List<object[]> Rows { get; set; }
 
-        
+
         /// <summary>
         /// Convert to a standard datatable
         /// </summary>
@@ -80,9 +80,11 @@ namespace DataQuery.Net
                 TableName = "Data query result"
             };
 
+
             foreach (var col in Columns)
             {
-                dt.Columns.Add(new DataColumn(col.Id + " (" + col.DisplayName + ")", col.PropertyType) );
+                var type = Nullable.GetUnderlyingType(col.PropertyType) ?? col.PropertyType;
+                dt.Columns.Add(new DataColumn(col.Id + " (" + col.DisplayName + ")", type));
             }
 
             foreach (object[] row in Rows)
@@ -92,7 +94,7 @@ namespace DataQuery.Net
 
             return dt;
         }
-        
+
 
         public void Dispose()
         {

@@ -1,7 +1,9 @@
-﻿namespace DataQuery.Net
+﻿using System.Threading.Tasks;
+
+namespace DataQuery.Net
 {
-  public interface IDataQueryRepository
-  {
-    DataQueryResult Query(DataQuerySchema config, DataQueryFilterParams filter);
-  }
+    public interface IDataQueryRepository
+    {
+        Task<DataQueryResult> QueryAsync(DataQuerySchema config, DataQueryFilterParams filter);
+    }
 }

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;
+using System.Threading.Tasks;
 
 namespace DataQuery.Net
 {
@@ -21,7 +22,7 @@ namespace DataQuery.Net
             this._options = options;
         }
 
-        public DataQueryResult Query(DataQuerySchema config, DataQueryFilterParams filter)
+        public async Task<DataQueryResult> QueryAsync(DataQuerySchema config, DataQueryFilterParams filter)
         {
             string uniqueKey = _options.CacheKeyPrefix + "_" + (JsonConvert.SerializeObject(filter)).ToGuid().ToString();
 
@@ -35,7 +36,7 @@ namespace DataQuery.Net
                         return JsonConvert.DeserializeObject<DataQueryResult>(result);
                     }
 
-                   var data = QueryBase(config, filter);
+                   var data = await QueryBaseAsync(config, filter);
 
                     _distributed.SetString(uniqueKey,JsonConvert.SerializeObject(data, Formatting.None), new DistributedCacheEntryOptions()
                     {
@@ -44,25 +45,25 @@ namespace DataQuery.Net
                 }
                 else
                 {
-                    return _cache.GetOrCreate(uniqueKey, (e) =>
+                    return await _cache.GetOrCreateAsync(uniqueKey, async (e) =>
                     {
                         e.AbsoluteExpiration = DateTime.Now.AddSeconds(_options.CacheDuration);
-                        return QueryBase(config, filter);
+                        return await QueryBaseAsync(config, filter);
                     });
                 }
             }
 
-            return QueryBase(config, filter);
+            return await QueryBaseAsync(config, filter);
         }
 
-        private DataQueryResult QueryBase(DataQuerySchema config, DataQueryFilterParams filterParams)
+        private async Task<DataQueryResult> QueryBaseAsync(DataQuerySchema config, DataQueryFilterParams filterParams)
         {
             var builder = new DataQuerySqlServerBuilder(_options);
 
             // Transform input parameted to clean dataQueryFilter object
             var filters = filterParams.Parse(config);
 
-            var query = builder.Query(config, filters);
+            var query = await builder.QueryAsync(config, filters);
 
             query.Filter = filterParams;
 

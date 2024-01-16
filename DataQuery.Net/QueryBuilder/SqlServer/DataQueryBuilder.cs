@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
 
 namespace DataQuery.Net
 {
@@ -37,7 +38,7 @@ namespace DataQuery.Net
         /// <param name="param"></param>
         /// <param name="conf"></param>
         /// <returns></returns>
-        public DataQueryResult Query(DataQuerySchema conf, DataQueryFilter filters)
+        public async Task<DataQueryResult> QueryAsync(DataQuerySchema conf, DataQueryFilter filters)
         {
             // Set size
             if (filters.PageSize > _options.MaxRecordsetSize)
@@ -199,7 +200,7 @@ namespace DataQuery.Net
 
             using (var cnx = new SqlConnection(_options.ConnectionString))
             {
-                cnx.Open();
+                await cnx.OpenAsync();
                 using (var manager = new SqlCommand(sql, cnx))
                 {
                     //Ajout des params
@@ -229,7 +230,7 @@ namespace DataQuery.Net
 
                             object val = null;
                             List<object> row = null;
-                            while (reader.Read())
+                            while (await reader.ReadAsync())
                             {
                                 //Ligne de données
                                 row = new List<object>();
@@ -272,7 +273,7 @@ namespace DataQuery.Net
             {
                 using (var cnx = new SqlConnection(_options.ConnectionString))
                 {
-                    cnx.Open();
+                    await cnx.OpenAsync();
                     using (var manager = new SqlCommand(sqlCount, cnx))
                     {
 
@@ -284,9 +285,9 @@ namespace DataQuery.Net
                         }
 
                         //Requête
-                        using (SqlDataReader reader = manager.ExecuteReader())
+                        using (SqlDataReader reader =  manager.ExecuteReader())
                         {
-                            if (reader.Read())
+                            if (await reader.ReadAsync())
                             {
                                 result.Data.TotalRows = reader.GetInt32(reader.GetOrdinal("totalRows"));
                             }
@@ -484,41 +485,6 @@ namespace DataQuery.Net
 
             return textIntegralSearch;
         }
-
-        /// <summary>
-        /// Build a date query
-        /// </summary>
-        /*
-        private void AppendDateQuery(DataQueryFilter filters)
-        {
-            if (!filters.DateDebut.HasValue && !filters.DateFin.HasValue)
-                return;
-
-            IList<Column> dateProps = null;
-
-            //Cas ou on fait ça en automatique
-            if (filters.ForcedDateFilter.Any())
-                dateProps = filters.ForcedDateFilter;
-            else
-                dateProps = filters.Tables.Values.SelectMany(m => m.Columns).Where(m => m.UsedToFilterDate).ToList();
-
-            int i = 1;
-            if (dateProps.Any())
-            {
-                foreach (Column dim in dateProps)
-                {
-                    AppendWhere(dim.ColumnName + string.Format(" BETWEEN @dq_dateDeb{0} AND @dq_dateFin{0}  ", i));
-
-                    if (filters.DateFin.Value.TimeOfDay.TotalSeconds == 0)
-                        filters.DateFin = filters.DateFin.Value.AddDays(1).AddSeconds(-1);
-
-                    AddParameter("@dq_dateDeb" + i, SqlDbType.DateTime, filters.DateDebut);
-                    AddParameter("@dq_dateFin" + i, SqlDbType.DateTime, filters.DateFin);
-                    i++;
-                }
-            }
-        }*/
-
 
         private void AppendInclusion(List<Inclusion> inclusions)
         {
