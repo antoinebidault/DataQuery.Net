@@ -236,15 +236,6 @@ namespace DataQuery.Net
             {
                 foreach (Dimension prop in table.Columns)
                 {
-
-                    foreach (Dimension dim in dqFilter.ForcedDateFilter)
-                    {
-                        if (dim.Alias == prop.Alias)
-                        {
-                            dqFilter.Tables[table.Alias] = table;
-                        }
-                    }
-
                     foreach (Dimension dim in dqFilter.Dimensions)
                     {
                         if (dim.Alias == prop.Alias)
@@ -263,16 +254,15 @@ namespace DataQuery.Net
                 }
             }
 
-
+            /*
             if (!dqFilter.Tables.Any(m => m.Value.Root))
             {
-                throw new InvalidOperationException("You must at least query a root property that is connected");
-            }
+                throw new InvalidOperationException("You must at least query a root table that is connected");
+            }*/
 
             if (!dqFilter.Tables.Values.IsConnected(config.Tables.Values))
             {
                 throw new InvalidOperationException("Tables must be connected ");
-
             }
 
             return dqFilter;

@@ -124,6 +124,12 @@ namespace DataQuery.Net
             string output = "";
             var tableClones = tablesIncluded.ToDictionary(entry => entry.Key,
                                                entry => entry.Value);
+
+            if (!tableClones.Any(m => m.Value.Root))
+            {
+                throw new InvalidOperationException("You must at least query a root table that is connected");
+            }
+
             output += GenerateJoin(tableClones, joins);
 
             return output;
