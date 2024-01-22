@@ -18,9 +18,9 @@ namespace DataQuery.Net.Sample.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index([FromQuery] DataQueryFilterParams param)
+        public async Task<IActionResult> Index([FromQuery] DataQueryFilterParams param)
         {
-            var results = _dataQuery.Query(param);
+            var results = await _dataQuery.QueryAsync(param);
             return Ok(results);
         }
 

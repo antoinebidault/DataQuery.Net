@@ -20,16 +20,14 @@ namespace DataQuery.Net.Tests
                 Aggregate = false,
                 Size = 10,
                 Page = 1,
-                Dimensions = new[] { "User.Name", "User.Email", "User_Stat.Date" },
+                Dimensions = new[] { "U_Name", "U_Email", "US_Date", "US_NbConnexion" },
                 Asc = true,
-                Filters = "User.Name=~Jean Marc%",
-                Metrics = new[] { "User_Stat.NbConnexion" }
+                Filters = "U_Name=~Jean Marc%"
             };
 
             var cleanFilter = result.Parse(fixture.Config);
 
-            Assert.Equal(3, cleanFilter.Dimensions.Count);
-            Assert.Single(cleanFilter.Metrics);
+            Assert.Equal(4, cleanFilter.Dimensions.Count);
             //  Assert.Equal(cleanFilter.DateDebut.Value.Date, DateTime.Now.AddDays(-2).Date);
         }
     }

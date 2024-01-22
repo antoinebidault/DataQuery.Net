@@ -9,77 +9,80 @@ namespace DataQuery.Net.Tests
         {
             Config = new DataQuerySchema() { };
 
-            Config.AddTable(new Table("User")
+            var tableUser = Config.AddTable(new Table("User")
             {
                 Alias = "U",
-                Root = true,
-                Columns = new List<Dimension>
+                DisplayName = "Users",
+                Root = true
+            });
+
+            tableUser.AddDimension(
+                new Dimension()
                 {
-                    new Dimension()
-                    {
                     Name = "UserId",
                     SqlName = "U.Id",
                     Description = "User's id",
-                    DisplayName="Userid",
+                    DisplayName = "Userid",
                     Displayed = true,
                     SqlJoins = new Dictionary<string, string>
-                    {
-                        {"User_Stat", "UserId" }
-                    }
-                    },
-                    new Dimension()
-                    {
+                        {
+                            {"US", "UserId" }
+                        }
+                });
+
+            tableUser.AddDimension(
+                new Dimension()
+                {
                     Name = "Name",
                     SqlName = "U.Name",
                     Description = "User's name",
-                    DisplayName="Username",
+                    DisplayName = "Username",
                     Displayed = true
-                    },
+                });
+
+            tableUser.AddDimension(
                     new Dimension()
                     {
-                    Name = "Email",
-                    SqlName = "U.Email",
-                    Description = "Email",
-                    DisplayName="Email",
-                    Displayed = true
-                    }
-                }
+                        Name = "Email",
+                        SqlName = "U.Email",
+                        Description = "Email",
+                        DisplayName = "Email",
+                        Displayed = true
+                    });
+
+            var table = Config.AddTable(new Table("User_Stat")
+            {
+                Alias = "US"
             });
 
-            Config.AddTable(new Table("User_Stat")
+            table.AddDimension(new Dimension()
             {
-                Alias = "US",
-                Columns = new List<Dimension>
-                {
-                    new Dimension()
-                    {
-                         Name = "UserIdStat",
-                        SqlName = "US.UserId",
-                        Displayed = true,
-                        SqlJoins = new Dictionary<string, string>
+                Name = "UserIdStat",
+                SqlName = "US.UserId",
+                Displayed = true,
+                SqlJoins = new Dictionary<string, string>
                         {
-                            {"User", "UserId" }
+                            {"U", "UserId" }
                         }
-                    },
-                    new Dimension()
-                    {
-                        Name = "Date",
-                        SqlName = "US.Date",
-                        Description = "Date",
-                        UsedToFilterDate = true,
-                        SqlType = System.Data.SqlDbType.Date,
-                        Displayed = true
-                    },
-                    new Dimension()
-                    {
-                        Name = "NbConnexion",
-                        SqlName = "SUM(U.NbConnexion)",
-                        Description = "NbConnexion",
-                        DisplayName="NbConnexion",
-                        IsMetric = true,
-                        Displayed = true
-                    }
-                }
+            });
+
+
+            table.AddDimension(new Dimension()
+            {
+                Name = "Date",
+                SqlName = "US.Date",
+                Description = "Date",
+                UsedToFilterDate = true,
+                SqlType = System.Data.SqlDbType.Date,
+                Displayed = true
+            });
+
+            table.AddMetric(new Metric()
+            {
+                Name = "NbConnexion",
+                SqlName = "SUM(U.NbConnexion)",
+                Description = "NbConnexion",
+                DisplayName = "NbConnexion",
             });
 
         }
