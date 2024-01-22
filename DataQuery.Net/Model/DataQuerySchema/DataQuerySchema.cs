@@ -15,7 +15,7 @@ namespace DataQuery.Net
 
         public Func<object, DataQuerySchemaExposedColumn, object> FormatRowCell { get; set; }
 
-        public void AddTable(Table table)
+        public Table AddTable(Table table)
         {
             // Check if table has not been already added
             if (this.Tables.ContainsKey(table.Alias))
@@ -26,6 +26,8 @@ namespace DataQuery.Net
             }
 
             this.Tables.Add(table.Alias, table);
+
+            return table;
         }
 
         public void RemoveTable(string tableName)
