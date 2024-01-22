@@ -7,7 +7,7 @@ namespace DataQuery.Net
 {
     public class DataQuerySchemaExposedColumn
     {
-        public DataQuerySchemaExposedColumn(Dimension col)
+        public DataQuerySchemaExposedColumn(Dimension col, Table table)
         {
             this.Id = col.Alias;
             this.Name = col.Name;
@@ -22,9 +22,11 @@ namespace DataQuery.Net
             this.MetaDatas = col.Items;
             this.PropertyType = col.PropertyType;
             this.Values = col.Values;
+            this.TableDisplayName = table.DisplayName;
+            this.TableId = table.Alias;
         }
 
-       
+
         public string Id { get; set; }
         public string Name { get; }
         public string DisplayName { get; set; }
