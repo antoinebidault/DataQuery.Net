@@ -84,7 +84,7 @@ namespace DataQuery.Net
             foreach (var col in Columns)
             {
                 var type = Nullable.GetUnderlyingType(col.PropertyType) ?? col.PropertyType;
-                dt.Columns.Add(new DataColumn(col.Id + " (" + col.DisplayName + ")", type));
+                dt.Columns.Add(new DataColumn($"{col.DisplayName} ({col.TableDisplayName})", type));
             }
 
             foreach (object[] row in Rows)

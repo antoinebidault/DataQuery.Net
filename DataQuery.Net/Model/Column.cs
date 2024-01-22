@@ -171,7 +171,6 @@ namespace DataQuery.Net
         /// Please use "SqlName" instead
         /// </summary>
         public string ColumnName { get; set; }
-
     }
 
     public class ColumnValue

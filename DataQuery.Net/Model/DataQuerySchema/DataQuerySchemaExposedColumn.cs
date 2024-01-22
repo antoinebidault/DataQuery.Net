@@ -28,6 +28,8 @@ namespace DataQuery.Net
         public string Id { get; set; }
         public string Name { get; }
         public string DisplayName { get; set; }
+        public string TableId { get; set; }
+        public string TableDisplayName { get; set; }
         public string Description { get; set; }
         public SqlDbType? SqlType { get; }
         public string Group { get; set; }

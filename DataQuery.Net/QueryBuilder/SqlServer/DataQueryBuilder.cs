@@ -224,7 +224,11 @@ namespace DataQuery.Net
                                 {
                                     //Ajout d'une colonne
                                     var dimOrMetric = _config.MetricsAndDimensions[reader.GetName(i)];
-                                    result.Data.Columns.Add(new DataQuerySchemaExposedColumn(dimOrMetric));
+                                    result.Data.Columns.Add(new DataQuerySchemaExposedColumn(dimOrMetric)
+                                    {
+                                        TableId = dimOrMetric.TableAlias,
+                                        TableDisplayName = _config.Tables[dimOrMetric.TableAlias].DisplayName
+                                    });
                                 }
                             }
 
