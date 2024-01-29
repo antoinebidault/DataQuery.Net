@@ -259,7 +259,7 @@ namespace DataQuery.Net
                     catch (SqlException e)
                     {
                         //Si erreur, on catch la requête SQL pour débugger...
-                        throw new Exception(e.Message + "\r\n" + sql.Replace(Environment.NewLine, ""));
+                        throw new Exception(e.Message + "\r\n" + (_options.IncludeQueryProfiling ? sql.Replace(Environment.NewLine, "") : ""));
                     }
                 }
             }
