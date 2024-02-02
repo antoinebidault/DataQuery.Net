@@ -38,7 +38,11 @@ namespace DataQuery.Net
       if (!operatorDefined)
         throw new Exception("Incorrectly formatted filter : " + filter);
 
-      string cleanedFilter = filter.TrimEnd(';').TrimEnd(',');
+      string cleanedFilter = filter
+                .TrimEnd(';')
+                .TrimEnd(',')
+                .Replace("\\(","__par_left__")
+                .Replace("\\)", "__par_right__");
 
       string pattern = @"(^\(*)[^\)]+(\)*$)";
       var res = Regex.Match(cleanedFilter, pattern);
@@ -55,7 +59,10 @@ namespace DataQuery.Net
       string dimOrMetricName = filterArray.First();
 
       //Définition de la valeur
-      this.Value = filterArray.Last();
+      this.Value = filterArray.Last()
+                .Replace( "__par_left__","(")
+                .Replace("__par_right__",")")
+                .Replace("\\","");
 
 
       //Gestion des métriques lazy avec la double crochets

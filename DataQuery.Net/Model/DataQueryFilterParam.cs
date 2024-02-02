@@ -204,13 +204,26 @@ namespace DataQuery.Net
             string str = string.Empty;
             if (!string.IsNullOrEmpty(Filters))
             {
+                var escaped = false;
                 for (int i = 0; i < Filters.Length; i++)
                 {
                     str += Filters[i];
-                    if (Filters[i] == ';' || Filters[i] == ',' || i == Filters.Length - 1)
+
+                    if (Filters[i] == '\\')
                     {
-                        dqFilter.Filters.Add(new Filter(str, config));
-                        str = "";
+                        escaped = true;
+                    }
+                    else if (!escaped)
+                    {
+                        if (Filters[i] == ';' || Filters[i] == ',' || i == Filters.Length - 1)
+                        {
+                            dqFilter.Filters.Add(new Filter(str, config));
+                            str = "";
+                        }
+                    }
+                    else if (escaped)
+                    {
+                        escaped = false;
                     }
                 }
             }

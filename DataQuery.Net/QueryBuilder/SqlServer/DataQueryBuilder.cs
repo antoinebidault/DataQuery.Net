@@ -625,16 +625,24 @@ namespace DataQuery.Net
                 value = date;
             }
 
-            p.Value = value;
+            string typeName = null;
 
             if (sqlDbType == SqlDbType.Structured)
-                p.TypeName = "dbo.NVarcharList";
+                typeName = "dbo.NVarcharList";
 
             if (inCountQuery)
             {
-                _sqlCountWhereParams.Add(p);
+                _sqlCountWhereParams.Add(new SqlParameter(paramName, sqlDbType)
+                {
+                    Value = value,
+                    TypeName = typeName
+                });
             }
-            _sqlWhereParams.Add(p);
+            _sqlWhereParams.Add(new SqlParameter(paramName, sqlDbType)
+            {
+                Value = value,
+                TypeName = typeName
+            });
 
         }
     }
