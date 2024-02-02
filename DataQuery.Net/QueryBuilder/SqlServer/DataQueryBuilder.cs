@@ -76,7 +76,7 @@ namespace DataQuery.Net
                 _sqlSelect.Add(champ.SqlNameComputed + " AS " + champ.Alias);
                 _sqlSelectCte.Add(champ.Alias);
                 if (!champ.IsMetric)
-                 _sqlGroupBy.Add(champ.SqlNameComputed);
+                    _sqlGroupBy.Add(champ.SqlNameComputed);
             }
 
             // Sorting
@@ -285,7 +285,7 @@ namespace DataQuery.Net
                         }
 
                         //Requête
-                        using (SqlDataReader reader =  manager.ExecuteReader())
+                        using (SqlDataReader reader = manager.ExecuteReader())
                         {
                             if (await reader.ReadAsync())
                             {
@@ -611,8 +611,6 @@ namespace DataQuery.Net
         /// <param name="inCountQuery"></param>
         private void AddParameter(string paramName, SqlDbType sqlDbType, object value, bool inCountQuery = true)
         {
-            SqlParameter p = new SqlParameter(paramName, sqlDbType);
-
             if (sqlDbType == SqlDbType.UniqueIdentifier)
                 value = new Guid(value.ToString());
 
