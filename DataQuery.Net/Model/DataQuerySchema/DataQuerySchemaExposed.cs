@@ -7,6 +7,13 @@ namespace DataQuery.Net
 {
     public class DataQuerySchemaExposed
     {
+        /// <summary>
+        /// Do not remove
+        /// </summary>
+        public DataQuerySchemaExposed()
+        {
+
+        }
         public DataQuerySchemaExposed(DataQuerySchema schema)
         {
             foreach (var table in schema.Tables.Where(m => !m.Value.Implicit).Select(m=>m.Value))
