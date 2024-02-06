@@ -7,6 +7,11 @@ namespace DataQuery.Net
 {
     public class DataQuerySchemaExposedColumn
     {
+        /// <summary>
+        /// Do no't remove, it is necessary for integration testing purposes
+        /// </summary>
+        public DataQuerySchemaExposedColumn() { }
+
         public DataQuerySchemaExposedColumn(Dimension col, Table table)
         {
             this.Id = col.Alias;
@@ -15,7 +20,7 @@ namespace DataQuery.Net
             this.Description = col.Description;
             this.SqlType = col.SqlType;
             this.Type = GetType(col.PropertyType);
-            this.EnumType = col.PropertyType.IsEnum ? col.PropertyType.Name : null;
+            this.EnumType = col.PropertyType != null && col.PropertyType.IsEnum ? col.PropertyType.Name : null;
             this.Group = col.Group;
             this.Unit = col.Unit;
             this.Color = col.Color;
