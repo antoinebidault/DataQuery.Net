@@ -8,6 +8,7 @@ namespace DataQuery.Net
     public interface IDataQuery
     {
         Task<DataQueryResult> QueryAsync(DataQueryFilterParams filter);
-        DataQuerySchemaExposed GetSchema();
+        DataQuerySchemaExposed GetSchemaExposed();
+        DataQuerySchema GetSchema();
     }
 }

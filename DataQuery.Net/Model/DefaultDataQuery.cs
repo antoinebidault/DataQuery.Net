@@ -6,7 +6,7 @@ namespace DataQuery.Net
     {
         private IDataQueryProvider _provider;
         private readonly IDataQueryRepository _repo;
-
+        private DataQuerySchema _schema;
         public DefaultDataQuery(IDataQueryRepository repo, IDataQueryProvider provider)
         {
             _provider = provider;
@@ -17,9 +17,20 @@ namespace DataQuery.Net
             return await _repo.QueryAsync(_provider.Provide(), filter);
         }
 
-        public DataQuerySchemaExposed GetSchema()
+        public DataQuerySchemaExposed GetSchemaExposed()
         {
-            return new DataQuerySchemaExposed(_provider.Provide());
+            return new DataQuerySchemaExposed(GetSchema());
+        }
+
+        public DataQuerySchema GetSchema()
+        {
+            if (_schema != null)
+            {
+                return _schema;
+            }
+
+            _schema = _provider.Provide();
+            return _schema;
         }
     }
 

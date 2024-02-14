@@ -80,7 +80,6 @@ namespace DataQuery.Net
                 TableName = "Data query result"
             };
 
-
             foreach (var col in Columns)
             {
                 var type = Nullable.GetUnderlyingType(col.PropertyType) ?? col.PropertyType;
