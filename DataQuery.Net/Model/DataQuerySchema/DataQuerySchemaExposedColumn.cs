@@ -19,7 +19,7 @@ namespace DataQuery.Net
             this.Group = col.Group;
             this.Unit = col.Unit;
             this.Color = col.Color;
-            this.MetaDatas = col.Items;
+            this.AdditionalData = col.AdditionalData;
             this.PropertyType = col.PropertyType;
             this.Values = col.Values;
         }
@@ -35,7 +35,7 @@ namespace DataQuery.Net
         public string Type { get; set; }
         public string EnumType { get; }
         public string Color { get; }
-        public IDictionary<string, object> MetaDatas { get; }
+        public IDictionary<string, object> AdditionalData { get; }
 
         [JsonIgnore]
         public Type PropertyType { get; set; }
