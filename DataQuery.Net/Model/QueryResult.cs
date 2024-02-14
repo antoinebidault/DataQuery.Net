@@ -73,7 +73,7 @@ namespace DataQuery.Net
         /// Convert to a standard datatable
         /// </summary>
         /// <returns></returns>
-        public DataTable ToDataTable()
+        public DataTable ToDataTable(DataQuerySchema schema = null)
         {
             var dt = new DataTable
             {
@@ -89,6 +89,13 @@ namespace DataQuery.Net
 
             foreach (object[] row in Rows)
             {
+                if (schema.FormatCellDataTable != null)
+                {
+                    for (var i = 0; i < row.Length; i++)
+                    {
+                        row[i] = schema.FormatCellDataTable.Invoke(row[i], Columns[i]);
+                    }
+                }
                 dt.Rows.Add(row);
             }
 

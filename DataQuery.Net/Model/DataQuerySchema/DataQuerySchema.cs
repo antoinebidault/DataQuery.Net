@@ -15,6 +15,8 @@ namespace DataQuery.Net
 
         public Func<object, DataQuerySchemaExposedColumn, object> FormatRowCell { get; set; }
 
+        public Func<object, DataQuerySchemaExposedColumn, object> FormatCellDataTable { get; set; }
+
         public Table AddTable(Table table)
         {
             // Check if table has not been already added
