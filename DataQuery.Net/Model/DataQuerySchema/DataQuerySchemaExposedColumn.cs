@@ -74,6 +74,7 @@ namespace DataQuery.Net
             else if (type == typeof(int)
              || type == typeof(double)
              || type == typeof(float)
+             || type == typeof(long)
              || type == typeof(decimal))
             {
                 return "number";
