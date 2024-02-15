@@ -88,7 +88,7 @@ namespace DataQuery.Net
 
             foreach (object[] row in Rows)
             {
-                if (schema.FormatCellDataTable != null)
+                if (schema?.FormatCellDataTable != null)
                 {
                     for (var i = 0; i < row.Length; i++)
                     {
