@@ -215,8 +215,9 @@ namespace DataQuery.Net
             string output = "";
             if (joining.To != null && joining.From != null)
             {
-                Dimension prop = joining.From.Columns.FirstOrDefault(m => m.SqlJoins != null && m.SqlJoins.ContainsKey(joining.To.Alias));
-                output += joining.From.Alias + "." + prop.SqlName + "=" + joining.To.Alias + "." + prop.SqlJoins[joining.To.Alias];
+                Dimension propFrom = joining.From.Columns.FirstOrDefault(m => m.SqlJoins != null && m.SqlJoins.ContainsKey(joining.To.Alias));
+                Dimension propTo = joining.To.Columns.FirstOrDefault(m => m.SqlJoins != null && m.SqlJoins.ContainsKey(joining.From.Alias));
+                output += propFrom.SqlNameComputed + "=" + propTo.SqlNameComputed;
             }
             return output;
         }
